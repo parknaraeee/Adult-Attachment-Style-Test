@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>성인 애착유형 테스트</title>
+<meta property="og:title" content="성인 애착 유형 검사">
+<meta property="og:description" content="나는 관계 안에서 어떤 사람인가 — 존 볼비의 애착이론과 ECR 척도를 기반으로 설계된 심층 분석 테스트">
+<meta property="og:image" content="https://xn--c79ao69afndh2beykqtq.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://xn--c79ao69afndh2beykqtq.com">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="성인 애착 유형 검사">
+<meta name="twitter:description" content="나는 관계 안에서 어떤 사람인가">
+<meta name="twitter:image" content="https://xn--c79ao69afndh2beykqtq.com/og-image.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23a78bfa'/></svg>">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8499558471981228"
      crossorigin="anonymous"></script>
@@ -83,46 +94,62 @@
   @keyframes bounce{0%,80%,100%{transform:translateY(0);opacity:.4;}40%{transform:translateY(-10px);opacity:1;}}
   .loading p{font-size:13px;color:var(--muted);letter-spacing:2px;}
 
-  /* RESULT */
-  .result-wrap{max-width:800px;margin:0 auto;padding:80px 24px;}
-  .result-hero{text-align:center;padding:80px 0 60px;}
-  .type-badge{display:inline-block;padding:8px 24px;border-radius:100px;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:28px;}
-  .result-title{font-family:'Noto Serif KR',serif;font-size:clamp(22px,3.5vw,36px);font-weight:300;line-height:1.5;margin-bottom:20px;}
-  .result-sub{font-size:14px;color:var(--dim);max-width:520px;margin:0 auto;line-height:2;}
-  .sec-label{font-size:10px;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:28px;display:flex;align-items:center;gap:16px;}
+  /* RESULT - value report style */
+  .result-hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px 24px;position:relative;}
+  .result-hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(124,58,237,0.12) 0%,transparent 70%);pointer-events:none;}
+  .scroll-hint{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted);font-size:11px;letter-spacing:2px;}
+  .scroll-line{width:1px;height:48px;background:linear-gradient(to bottom,var(--accent),transparent);animation:scrollAnim 2s ease-in-out infinite;}
+  @keyframes scrollAnim{0%,100%{opacity:0.3;transform:scaleY(1);}50%{opacity:1;transform:scaleY(1.2);}}
+  .type-badge{display:inline-block;padding:8px 24px;border-radius:100px;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:32px;}
+  .result-title{font-family:'Noto Serif KR',serif;font-size:clamp(24px,4vw,44px);font-weight:300;line-height:1.5;margin-bottom:20px;}
+  .result-sub{font-size:14px;color:var(--dim);max-width:480px;margin:0 auto;line-height:2;}
+  .r-container{max-width:780px;margin:0 auto;padding:0 24px;}
+  .r-section{padding:80px 0;border-top:1px solid var(--border);}
+  .sec-label{font-size:10px;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:40px;display:flex;align-items:center;gap:16px;}
   .sec-label::after{content:'';flex:1;height:1px;background:var(--border);}
-  .score-section{margin:60px 0;}
-  .score-row{display:flex;align-items:center;gap:16px;margin-bottom:18px;}
+  .sec-h2{font-family:'Noto Serif KR',serif;font-size:clamp(20px,3vw,28px);font-weight:300;color:var(--text);margin-bottom:16px;line-height:1.5;}
+  .sec-divider{width:40px;height:1px;background:var(--accent);margin:16px 0 32px;opacity:0.5;}
+  .prose{font-size:14px;color:var(--dim);line-height:2;margin:20px 0;}
+  .prose strong{color:var(--text);font-weight:500;}
+  /* score bars */
+  .score-row{display:flex;align-items:center;gap:16px;margin-bottom:16px;}
   .score-lbl{font-size:13px;color:var(--dim);min-width:72px;}
-  .score-track{flex:1;height:6px;background:var(--border);border-radius:6px;overflow:hidden;}
+  .score-track{flex:1;height:5px;background:var(--border);border-radius:6px;overflow:hidden;}
   .score-bar{height:100%;border-radius:6px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
   .score-pct{font-size:13px;color:var(--dim);min-width:36px;text-align:right;}
+  /* axes */
   .axes-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:32px 0;}
   .axis-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;}
   .axis-label{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;}
-  .axis-bar-wrap{position:relative;height:8px;background:var(--border);border-radius:8px;margin:8px 0;}
+  .axis-bar-wrap{height:6px;background:var(--border);border-radius:8px;margin:8px 0;overflow:hidden;}
   .axis-bar{height:100%;border-radius:8px;transition:width 1.2s ease;}
   .axis-val{font-size:22px;font-family:'Noto Serif KR',serif;color:var(--text);margin-top:8px;}
   .axis-desc{font-size:12px;color:var(--muted);margin-top:4px;}
-  .rcard{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:36px;margin:20px 0;position:relative;overflow:hidden;}
-  .rcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-  .rcard-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
-  .rcard-title{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:400;margin-bottom:14px;color:var(--text);}
-  .rcard-body{font-size:14px;color:var(--dim);line-height:2;}
-  .tag-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
-  .tag{padding:6px 14px;border-radius:100px;font-size:12px;}
-  .combo-box{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:24px;margin:16px 0;}
+  /* combo */
+  .combo-box{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0;}
   .combo-title{font-size:13px;color:var(--text);margin-bottom:8px;font-weight:400;}
   .combo-body{font-size:13px;color:var(--dim);line-height:1.9;}
-  .scenario-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px;margin:16px 0;}
-  .scenario-icon{font-size:20px;margin-bottom:12px;display:block;}
-  .scenario-title{font-size:15px;color:var(--text);font-weight:400;margin-bottom:12px;}
-  .scenario-body{font-size:13px;color:var(--dim);line-height:2;}
-  .speech{display:block;border-left:2px solid var(--accent);padding:12px 20px;margin-top:14px;font-size:13px;color:var(--accent);background:var(--accent-s);border-radius:0 8px 8px 0;}
-  .final-msg{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:52px;margin:40px 0;text-align:center;}
-  .final-msg p{font-family:'Noto Serif KR',serif;font-size:clamp(15px,2vw,18px);font-weight:300;line-height:2.4;color:var(--dim);}
-  .final-msg em{color:var(--accent);font-style:normal;}
-  .btn-row{display:flex;gap:12px;justify-content:center;margin-top:40px;flex-wrap:wrap;}
+  /* tags */
+  .tag-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+  .tag{padding:6px 14px;border-radius:100px;font-size:12px;}
+  /* cards */
+  .r-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:36px;margin:20px 0;position:relative;overflow:hidden;}
+  .r-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+  .r-card-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
+  .r-card-title{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:400;margin-bottom:14px;color:var(--text);}
+  .r-card-body{font-size:14px;color:var(--dim);line-height:2;}
+  /* scenario */
+  .scene-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:36px;margin:20px 0;position:relative;overflow:hidden;}
+  .scene-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,#7c3aed,var(--accent),transparent);}
+  .scene-icon{font-size:24px;margin-bottom:16px;display:block;}
+  .scene-title{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:400;color:var(--text);margin-bottom:16px;}
+  .speech{display:block;border-left:2px solid var(--accent);padding:14px 20px;margin-top:16px;font-size:13px;color:var(--accent);background:var(--accent-s);border-radius:0 8px 8px 0;font-style:italic;}
+  /* final */
+  .final-section{padding:120px 0;text-align:center;border-top:1px solid var(--border);position:relative;}
+  .final-section::before{content:'';position:absolute;bottom:-100px;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(167,139,250,0.08) 0%,transparent 70%);}
+  .final-text{font-family:'Noto Serif KR',serif;font-size:clamp(16px,2.5vw,20px);font-weight:300;line-height:2.4;color:var(--dim);max-width:580px;margin:0 auto;}
+  .final-text em{color:var(--accent);font-style:normal;}
+  .btn-row{display:flex;gap:12px;justify-content:center;margin-top:52px;flex-wrap:wrap;}
   .btn-retry{background:transparent;border:1px solid var(--border);color:var(--dim);padding:14px 36px;border-radius:100px;font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all 0.2s;}
   .btn-retry:hover{border-color:var(--accent);color:var(--text);}
   .btn-share{background:var(--accent-s);border:1px solid rgba(167,139,250,0.3);color:var(--accent);padding:14px 36px;border-radius:100px;font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;}
@@ -210,43 +237,54 @@
 
 <!-- RESULT -->
 <div id="s-result" class="screen">
-  <div class="result-wrap">
-    <div class="result-hero">
-      <div class="type-badge" id="r-badge"></div>
-      <h1 class="result-title" id="r-title"></h1>
-      <p class="result-sub" id="r-sub"></p>
-    </div>
-    <div class="score-section">
+  <!-- HERO -->
+  <div class="result-hero">
+    <div class="type-badge" id="r-badge"></div>
+    <h1 class="result-title" id="r-title"></h1>
+    <p class="result-sub" id="r-sub"></p>
+    <div class="scroll-hint"><div class="scroll-line"></div></div>
+  </div>
+
+  <!-- 점수 섹션 -->
+  <div class="r-section">
+    <div class="r-container">
       <p class="sec-label">유형별 점수</p>
       <div class="score-row"><span class="score-lbl c-secure">안정형</span><div class="score-track"><div class="score-bar bar-secure" id="bar-s" style="width:0%"></div></div><span class="score-pct" id="pct-s">0%</span></div>
       <div class="score-row"><span class="score-lbl c-anxious">불안형</span><div class="score-track"><div class="score-bar bar-anxious" id="bar-a" style="width:0%"></div></div><span class="score-pct" id="pct-a">0%</span></div>
       <div class="score-row"><span class="score-lbl c-avoidant">회피형</span><div class="score-track"><div class="score-bar bar-avoidant" id="bar-v" style="width:0%"></div></div><span class="score-pct" id="pct-v">0%</span></div>
       <div class="score-row"><span class="score-lbl c-disorganized">혼란형</span><div class="score-track"><div class="score-bar bar-disorganized" id="bar-d" style="width:0%"></div></div><span class="score-pct" id="pct-d">0%</span></div>
-    </div>
-    <div id="axes-section" style="display:none">
-      <p class="sec-label">두 축 분석 (ECR 기반)</p>
-      <div class="axes-grid">
-        <div class="axis-card">
-          <p class="axis-label">불안 축 · Anxiety</p>
-          <div class="axis-bar-wrap"><div class="axis-bar" id="axis-anx" style="width:0%;background:var(--anxious)"></div></div>
-          <p class="axis-val" id="axis-anx-val">-</p>
-          <p class="axis-desc" id="axis-anx-desc"></p>
+      <div id="axes-section" style="display:none;margin-top:40px;">
+        <p class="sec-label">두 축 분석 (ECR 기반)</p>
+        <div class="axes-grid">
+          <div class="axis-card">
+            <p class="axis-label">불안 축 · Anxiety</p>
+            <div class="axis-bar-wrap"><div class="axis-bar" id="axis-anx" style="width:0%;background:var(--anxious)"></div></div>
+            <p class="axis-val" id="axis-anx-val">-</p>
+            <p class="axis-desc" id="axis-anx-desc"></p>
+          </div>
+          <div class="axis-card">
+            <p class="axis-label">회피 축 · Avoidance</p>
+            <div class="axis-bar-wrap"><div class="axis-bar" id="axis-avo" style="width:0%;background:var(--avoidant)"></div></div>
+            <p class="axis-val" id="axis-avo-val">-</p>
+            <p class="axis-desc" id="axis-avo-desc"></p>
+          </div>
         </div>
-        <div class="axis-card">
-          <p class="axis-label">회피 축 · Avoidance</p>
-          <div class="axis-bar-wrap"><div class="axis-bar" id="axis-avo" style="width:0%;background:var(--avoidant)"></div></div>
-          <p class="axis-val" id="axis-avo-val">-</p>
-          <p class="axis-desc" id="axis-avo-desc"></p>
-        </div>
+        <div id="combo-analysis"></div>
       </div>
-      <div id="combo-analysis"></div>
     </div>
-    <div id="r-cards"></div>
-    <div id="r-scenarios" style="display:none">
-      <p class="sec-label" style="margin-top:40px;">일상 장면 속의 나</p>
-      <div id="scenarios-wrap"></div>
-    </div>
-    <div class="final-msg" id="r-final"></div>
+  </div>
+
+  <!-- 상세 분석 -->
+  <div id="r-cards"></div>
+
+  <!-- 일상 장면 -->
+  <div id="r-scenarios" style="display:none"></div>
+
+  <!-- 마지막 메시지 -->
+  <div class="final-section" id="r-final"></div>
+
+  <!-- 버튼 -->
+  <div style="padding:0 0 80px;text-align:center;">
     <div class="btn-row">
       <button class="btn-retry" onclick="resetTest()">다시 테스트하기</button>
       <button class="btn-share" onclick="shareResult()">
