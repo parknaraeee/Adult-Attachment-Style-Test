@@ -639,35 +639,50 @@ function animateBars() {
   },100);
 }
 
+function getResultUrl() {
+  const p = window._pcts;
+  const base = window.location.origin + window.location.pathname;
+  return `${base}#result=${window._primary}&s=${p.secure}&a=${p.anxious}&v=${p.avoidant}&d=${p.disorganized}&mode=${window._isDeep?'deep':'simple'}`;
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('share-toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+function copyToClipboard(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => showToast('링크가 복사되었어요 🔗')).catch(() => {
+      const el = document.createElement('textarea');
+      el.value = text; document.body.appendChild(el); el.select();
+      document.execCommand('copy'); document.body.removeChild(el);
+      showToast('링크가 복사되었어요 🔗');
+    });
+  } else {
+    const el = document.createElement('textarea');
+    el.value = text; document.body.appendChild(el); el.select();
+    document.execCommand('copy'); document.body.removeChild(el);
+    showToast('링크가 복사되었어요 🔗');
+  }
+}
+
 function shareResult() {
   const primary = window._primary;
   const d = typeData[primary];
   const pcts = window._pcts;
+  const resultUrl = getResultUrl();
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   if (isMobile && navigator.share) {
-    const text = `[성인 애착 유형 검사 결과]\n나의 유형: ${d.name} (${d.eng})\n${d.subtitle}\n\n안정형 ${pcts.secure}% / 불안형 ${pcts.anxious}% / 회피형 ${pcts.avoidant}% / 혼란형 ${pcts.disorganized}%\n\n나도 해보기 👉 ${window.location.href}`;
-    navigator.share({ title: '성인 애착 유형 검사', text: text });
-  } else {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url).then(() => {
-      const toast = document.getElementById('share-toast');
-      toast.textContent = '링크가 복사되었어요 🔗';
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2500);
-    }).catch(() => {
-      // fallback
-      const el = document.createElement('textarea');
-      el.value = url;
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand('copy');
-      document.body.removeChild(el);
-      const toast = document.getElementById('share-toast');
-      toast.textContent = '링크가 복사되었어요 🔗';
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2500);
+    navigator.share({
+      title: `나의 애착 유형은 ${d.name}`,
+      text: `[성인 애착 유형 검사]\n나의 유형: ${d.emoji} ${d.name}\n${d.subtitle}\n\n너는 어떤 유형일까? 👇`,
+      url: resultUrl
     });
+  } else {
+    copyToClipboard(resultUrl);
   }
 }
 
