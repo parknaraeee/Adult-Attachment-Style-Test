@@ -686,7 +686,46 @@ function shareResult() {
   }
 }
 
-function resetTest() { mode=null; showScreen('s-intro'); document.getElementById('card-simple').classList.remove('selected'); document.getElementById('card-deep').classList.remove('selected'); document.getElementById('btn-start').classList.remove('ready'); }
+function resetTest() {
+  mode = null;
+  history.replaceState(null, '', window.location.pathname);
+  showScreen('s-intro', false);
+  document.getElementById('card-simple').classList.remove('selected');
+  document.getElementById('card-deep').classList.remove('selected');
+  document.getElementById('btn-start').classList.remove('ready');
+}
+
+function loadFromHash() {
+  const hash = window.location.hash;
+  if (!hash.startsWith('#result=')) return false;
+  try {
+    const params = new URLSearchParams(hash.slice(1));
+    const primary = params.get('result');
+    const modeParam = params.get('mode') || 'simple';
+    if (!typeData[primary]) return false;
+    const pcts = {
+      secure: parseInt(params.get('s')) || 0,
+      anxious: parseInt(params.get('a')) || 0,
+      avoidant: parseInt(params.get('v')) || 0,
+      disorganized: parseInt(params.get('d')) || 0
+    };
+    const sorted = Object.entries(pcts).sort((a,b)=>b[1]-a[1]);
+    window._primary = primary;
+    window._pcts = pcts;
+    window._isDeep = modeParam === 'deep';
+    window._second = sorted.filter(([k])=>k!==primary)[0][0];
+    window._secondPct = sorted.filter(([k])=>k!==primary)[0][1];
+    window._anxPct = pcts.anxious;
+    window._avoPct = pcts.avoidant;
+    renderResult(primary, pcts, window._second, window._secondPct, window._anxPct, window._avoPct);
+    showScreen('s-result', false);
+    setTimeout(() => animateBars(), 300);
+    return true;
+  } catch(e) { console.error(e); return false; }
+}
+
+window.addEventListener('DOMContentLoaded', () => { loadFromHash(); });
+window.addEventListener('hashchange', () => { loadFromHash(); });
 </script>
 </body>
 </html>
