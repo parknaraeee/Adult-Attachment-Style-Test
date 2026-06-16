@@ -32,14 +32,14 @@
     --muted: #8a86a0;
     --accent: #a78bfa;
     --accent-s: rgba(167,139,250,0.1);
-    --secure: #4a9e82;
-    --secure-s: rgba(74,158,130,0.1);
-    --anxious: #b87898;
-    --anxious-s: rgba(184,120,152,0.1);
-    --avoidant: #5a88c0;
-    --avoidant-s: rgba(90,136,192,0.1);
-    --disorganized: #c09040;
-    --disorganized-s: rgba(192,144,64,0.1);
+    --secure: #B1B695;
+    --secure-s: rgba(177,182,149,0.1);
+    --anxious: #FCD0A1;
+    --anxious-s: rgba(252,208,161,0.1);
+    --avoidant: #AFD2E9;
+    --avoidant-s: rgba(175,210,233,0.1);
+    --disorganized: #A690A4;
+    --disorganized-s: rgba(166,144,164,0.1);
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-weight:300;line-height:1.8;min-height:100vh;}
@@ -95,28 +95,42 @@
   .loading p{font-size:13px;color:var(--muted);letter-spacing:2px;}
 
   /* RESULT - value report style */
-  .result-hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px 24px;position:relative;}
-  .result-hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(124,58,237,0.12) 0%,transparent 70%);pointer-events:none;}
-  .scroll-hint{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted);font-size:11px;letter-spacing:2px;}
+  .result-hero{text-align:center;padding:80px 0 60px;}
+  
+  .scroll-hint{display:none;}
   .scroll-line{width:1px;height:48px;background:linear-gradient(to bottom,var(--accent),transparent);animation:scrollAnim 2s ease-in-out infinite;}
   @keyframes scrollAnim{0%,100%{opacity:0.3;transform:scaleY(1);}50%{opacity:1;transform:scaleY(1.2);}}
   .type-badge{display:inline-block;padding:8px 24px;border-radius:100px;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:32px;}
   .result-title{font-family:'Noto Serif KR',serif;font-size:clamp(24px,4vw,44px);font-weight:300;line-height:1.5;margin-bottom:20px;}
   .result-sub{font-size:14px;color:var(--dim);max-width:480px;margin:0 auto;line-height:2;}
   .r-container{max-width:780px;margin:0 auto;padding:0 24px;}
-  .r-section{padding:80px 0;border-top:1px solid var(--border);}
+  
   .sec-label{font-size:10px;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:40px;display:flex;align-items:center;gap:16px;}
   .sec-label::after{content:'';flex:1;height:1px;background:var(--border);}
+  .rcard{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:36px;margin:20px 0;position:relative;overflow:hidden;}
+  .rcard::before{content:none;}
+  .rcard-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;display:block;}
+  .rcard-title{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:400;margin-bottom:14px;color:var(--text);}
+  .rcard-divider{display:none;}
+  .rcard-body{font-size:14px;color:var(--dim);line-height:2;}
+  .scenario-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px;margin:16px 0;position:relative;overflow:hidden;}
+  .scenario-icon{font-size:20px;margin-bottom:12px;display:block;}
+  .scenario-title{font-size:15px;color:var(--text);font-weight:400;margin-bottom:12px;}
+  .scenario-body{font-size:13px;color:var(--dim);line-height:2;}
+  .speech{display:block;border-left:2px solid var(--accent);padding:12px 20px;margin-top:14px;font-size:13px;color:var(--accent);background:var(--accent-s);border-radius:0 8px 8px 0;}
+  .final-msg{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:52px;margin:40px 0;text-align:center;}
+  .final-msg p{font-family:'Noto Serif KR',serif;font-size:clamp(15px,2vw,18px);font-weight:300;line-height:2.4;color:var(--dim);}
   .sec-h2{font-family:'Noto Serif KR',serif;font-size:clamp(20px,3vw,28px);font-weight:300;color:var(--text);margin-bottom:16px;line-height:1.5;}
   .sec-divider{width:40px;height:1px;background:var(--accent);margin:16px 0 32px;opacity:0.5;}
   .prose{font-size:14px;color:var(--dim);line-height:2;margin:20px 0;}
   .prose strong{color:var(--text);font-weight:500;}
   /* score bars */
   .score-row{display:flex;align-items:center;gap:16px;margin-bottom:16px;}
-  .score-lbl{font-size:13px;color:var(--dim);min-width:72px;}
-  .score-track{flex:1;height:5px;background:var(--border);border-radius:6px;overflow:hidden;}
+  .score-section{margin:40px 0;}
+  .score-lbl{font-size:14px;color:#c4c0d8;min-width:72px;font-weight:400;}
+  .score-track{flex:1;height:6px;background:var(--border);border-radius:6px;overflow:hidden;}
   .score-bar{height:100%;border-radius:6px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
-  .score-pct{font-size:13px;color:var(--dim);min-width:36px;text-align:right;}
+  .score-pct{font-size:14px;color:#c4c0d8;min-width:40px;text-align:right;font-weight:400;}
   /* axes */
   .axes-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:32px 0;}
   .axis-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;}
@@ -159,16 +173,16 @@
 
   /* COLORS */
   .c-secure{color:var(--secure);} .c-anxious{color:var(--anxious);} .c-avoidant{color:var(--avoidant);} .c-disorganized{color:var(--disorganized);}
-  .bg-secure{background:var(--secure-s);border-color:rgba(74,158,130,.25);}
-  .bg-anxious{background:var(--anxious-s);border-color:rgba(184,120,152,.25);}
-  .bg-avoidant{background:var(--avoidant-s);border-color:rgba(90,136,192,.25);}
-  .bg-disorganized{background:var(--disorganized-s);border-color:rgba(192,144,64,.25);}
+  .bg-secure{background:var(--secure-s);border-color:rgba(177,182,149,.25);}
+  .bg-anxious{background:var(--anxious-s);border-color:rgba(252,208,161,.25);}
+  .bg-avoidant{background:var(--avoidant-s);border-color:rgba(175,210,233,.25);}
+  .bg-disorganized{background:var(--disorganized-s);border-color:rgba(166,144,164,.25);}
   .bar-secure{background:var(--secure);} .bar-anxious{background:var(--anxious);} .bar-avoidant{background:var(--avoidant);} .bar-disorganized{background:var(--disorganized);}
   .top-secure::before{background:var(--secure);} .top-anxious::before{background:var(--anxious);} .top-avoidant::before{background:var(--avoidant);} .top-disorganized::before{background:var(--disorganized);}
-  .tag-secure{background:var(--secure-s);border:1px solid rgba(74,158,130,.25);color:var(--secure);}
-  .tag-anxious{background:var(--anxious-s);border:1px solid rgba(184,120,152,.25);color:var(--anxious);}
-  .tag-avoidant{background:var(--avoidant-s);border:1px solid rgba(90,136,192,.25);color:var(--avoidant);}
-  .tag-disorganized{background:var(--disorganized-s);border:1px solid rgba(192,144,64,.25);color:var(--disorganized);}
+  .tag-secure{background:var(--secure-s);border:1px solid rgba(177,182,149,.25);color:var(--secure);}
+  .tag-anxious{background:var(--anxious-s);border:1px solid rgba(252,208,161,.25);color:var(--anxious);}
+  .tag-avoidant{background:var(--avoidant-s);border:1px solid rgba(175,210,233,.25);color:var(--avoidant);}
+  .tag-disorganized{background:var(--disorganized-s);border:1px solid rgba(166,144,164,.25);color:var(--disorganized);}
 
   @media(max-width:500px){.axes-grid{grid-template-columns:1fr;}.mode-card{min-width:140px;padding:24px 16px;}}
   .name-wrap{margin-bottom:20px;}
@@ -237,54 +251,43 @@
 
 <!-- RESULT -->
 <div id="s-result" class="screen">
-  <!-- HERO -->
-  <div class="result-hero">
-    <div class="type-badge" id="r-badge"></div>
-    <h1 class="result-title" id="r-title"></h1>
-    <p class="result-sub" id="r-sub"></p>
-    <div class="scroll-hint"><div class="scroll-line"></div></div>
-  </div>
-
-  <!-- 점수 섹션 -->
-  <div class="r-section">
-    <div class="r-container">
+  <div class="result-wrap" style="max-width:800px;margin:0 auto;padding:80px 24px;">
+    <div class="result-hero">
+      <div class="type-badge" id="r-badge"></div>
+      <h1 class="result-title" id="r-title"></h1>
+      <p class="result-sub" id="r-sub"></p>
+    </div>
+    <div class="score-section">
       <p class="sec-label">유형별 점수</p>
       <div class="score-row"><span class="score-lbl c-secure">안정형</span><div class="score-track"><div class="score-bar bar-secure" id="bar-s" style="width:0%"></div></div><span class="score-pct" id="pct-s">0%</span></div>
       <div class="score-row"><span class="score-lbl c-anxious">불안형</span><div class="score-track"><div class="score-bar bar-anxious" id="bar-a" style="width:0%"></div></div><span class="score-pct" id="pct-a">0%</span></div>
       <div class="score-row"><span class="score-lbl c-avoidant">회피형</span><div class="score-track"><div class="score-bar bar-avoidant" id="bar-v" style="width:0%"></div></div><span class="score-pct" id="pct-v">0%</span></div>
       <div class="score-row"><span class="score-lbl c-disorganized">혼란형</span><div class="score-track"><div class="score-bar bar-disorganized" id="bar-d" style="width:0%"></div></div><span class="score-pct" id="pct-d">0%</span></div>
-      <div id="axes-section" style="display:none;margin-top:40px;">
-        <p class="sec-label">두 축 분석 (ECR 기반)</p>
-        <div class="axes-grid">
-          <div class="axis-card">
-            <p class="axis-label">불안 축 · Anxiety</p>
-            <div class="axis-bar-wrap"><div class="axis-bar" id="axis-anx" style="width:0%;background:var(--anxious)"></div></div>
-            <p class="axis-val" id="axis-anx-val">-</p>
-            <p class="axis-desc" id="axis-anx-desc"></p>
-          </div>
-          <div class="axis-card">
-            <p class="axis-label">회피 축 · Avoidance</p>
-            <div class="axis-bar-wrap"><div class="axis-bar" id="axis-avo" style="width:0%;background:var(--avoidant)"></div></div>
-            <p class="axis-val" id="axis-avo-val">-</p>
-            <p class="axis-desc" id="axis-avo-desc"></p>
-          </div>
-        </div>
-        <div id="combo-analysis"></div>
-      </div>
     </div>
-  </div>
-
-  <!-- 상세 분석 -->
-  <div id="r-cards"></div>
-
-  <!-- 일상 장면 -->
-  <div id="r-scenarios" style="display:none"></div>
-
-  <!-- 마지막 메시지 -->
-  <div class="final-section" id="r-final"></div>
-
-  <!-- 버튼 -->
-  <div style="padding:0 0 80px;text-align:center;">
+    <div id="axes-section" style="display:none">
+      <p class="sec-label">두 축 분석 (ECR 기반)</p>
+      <div class="axes-grid">
+        <div class="axis-card">
+          <p class="axis-label">불안 축 · Anxiety</p>
+          <div class="axis-bar-wrap"><div class="axis-bar" id="axis-anx" style="width:0%;background:var(--anxious)"></div></div>
+          <p class="axis-val" id="axis-anx-val">-</p>
+          <p class="axis-desc" id="axis-anx-desc"></p>
+        </div>
+        <div class="axis-card">
+          <p class="axis-label">회피 축 · Avoidance</p>
+          <div class="axis-bar-wrap"><div class="axis-bar" id="axis-avo" style="width:0%;background:var(--avoidant)"></div></div>
+          <p class="axis-val" id="axis-avo-val">-</p>
+          <p class="axis-desc" id="axis-avo-desc"></p>
+        </div>
+      </div>
+      <div id="combo-analysis"></div>
+    </div>
+    <div id="r-cards"></div>
+    <div id="r-scenarios" style="display:none">
+      <p class="sec-label" style="margin-top:40px;">일상 장면 속의 나</p>
+      <div id="scenarios-wrap"></div>
+    </div>
+    <div class="final-msg" id="r-final"></div>
     <div class="btn-row">
       <button class="btn-retry" onclick="resetTest()">다시 테스트하기</button>
       <button class="btn-share" onclick="shareResult()">
