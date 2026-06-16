@@ -236,11 +236,11 @@
     </div>
     <div class="final-msg" id="r-final"></div>
     <div class="btn-row">
+      <button class="btn-retry" onclick="resetTest()">다시 테스트하기</button>
       <button class="btn-share" onclick="shareResult()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
         결과 공유하기
       </button>
-      <button class="btn-retry" onclick="resetTest()">다시 테스트하기</button>
     </div>
   </div>
 </div>
@@ -434,11 +434,26 @@ function selectMode(m) {
   document.getElementById('btn-start').classList.add('ready');
 }
 
-function showScreen(id) {
+function showScreen(id, pushState=true) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
+  if (pushState) history.pushState({ screen: id, q: current }, '', '');
 }
+
+window.addEventListener('popstate', function(e) {
+  if (!e.state) { showScreen('s-intro', false); return; }
+  const { screen, q } = e.state;
+  if (screen === 's-intro') {
+    showScreen('s-intro', false);
+  } else if (screen === 's-quiz') {
+    current = q > 0 ? q - 1 : 0;
+    showScreen('s-quiz', false);
+    renderQ();
+  } else if (screen === 's-result') {
+    showScreen('s-result', false);
+  }
+});
 
 function startTest() {
   if (!mode) return;
@@ -480,10 +495,11 @@ function nextQ() {
   if (answers[current]===null) return;
   if (current===questions.length-1) { showLoading(); return; }
   current++;
+  history.pushState({ screen: 's-quiz', q: current }, '', '');
   renderQ();
 }
 
-function prevQ() { if(current>0){current--;renderQ();} }
+function prevQ() { if(current>0){ history.back(); } }
 
 function showLoading() {
   showScreen('s-loading');
@@ -603,7 +619,7 @@ function renderResult(primary, pcts, second, secondPct, anxPct, avoPct) {
 
   // Final msg
   document.getElementById('r-final').innerHTML = `
-    <p class="sec-label" style="justify-content:center;margin-bottom:32px;">이 사람에게 건네는 말</p>
+    <p class="sec-label" style="justify-content:center;margin-bottom:32px;">당신에게 건네는 말</p>
     <p>${d.msg.replace(/\. /g,'.<br><br>')}</p>`;
 }
 
@@ -627,12 +643,28 @@ function shareResult() {
   const primary = window._primary;
   const d = typeData[primary];
   const pcts = window._pcts;
-  const text = `[성인 애착 유형 검사 결과]\n나의 유형: ${d.name} (${d.eng})\n${d.subtitle}\n\n안정형 ${pcts.secure}% / 불안형 ${pcts.anxious}% / 회피형 ${pcts.avoidant}% / 혼란형 ${pcts.disorganized}%`;
-  if (navigator.share) {
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  if (isMobile && navigator.share) {
+    const text = `[성인 애착 유형 검사 결과]\n나의 유형: ${d.name} (${d.eng})\n${d.subtitle}\n\n안정형 ${pcts.secure}% / 불안형 ${pcts.anxious}% / 회피형 ${pcts.avoidant}% / 혼란형 ${pcts.disorganized}%\n\n나도 해보기 👉 ${window.location.href}`;
     navigator.share({ title: '성인 애착 유형 검사', text: text });
   } else {
-    navigator.clipboard.writeText(text).then(() => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
       const toast = document.getElementById('share-toast');
+      toast.textContent = '링크가 복사되었어요 🔗';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }).catch(() => {
+      // fallback
+      const el = document.createElement('textarea');
+      el.value = url;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      const toast = document.getElementById('share-toast');
+      toast.textContent = '링크가 복사되었어요 🔗';
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 2500);
     });
