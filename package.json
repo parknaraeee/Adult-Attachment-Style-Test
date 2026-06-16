@@ -1,0 +1,23 @@
+{
+  "name": "adult-attachment-style-test",
+  "version": "1.0.0",
+  "description": "Adult Attachment Style Test - Korean language psychological assessment",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"No tests specified\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/parknaraeee/Adult-Attachment-Style-Test.git"
+  },
+  "keywords": ["attachment", "psychology", "test", "korean"],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/parknaraeee/Adult-Attachment-Style-Test/issues"
+  },
+  "homepage": "https://github.com/parknaraeee/Adult-Attachment-Style-Test#readme",
+  "dependencies": {
+    "@vercel/speed-insights": "^2.0.0"
+  }
+}
