@@ -140,6 +140,10 @@
   .tag-disorganized{background:var(--disorganized-s);border:1px solid rgba(251,191,36,.25);color:var(--disorganized);}
 
   @media(max-width:500px){.axes-grid{grid-template-columns:1fr;}.mode-cards{flex-direction:column;}}
+  .name-wrap{margin-bottom:20px;}
+  .name-input{background:var(--bg2);border:1px solid var(--border);border-radius:100px;padding:14px 28px;font-size:15px;font-family:'Noto Sans KR',sans-serif;color:var(--text);text-align:center;outline:none;transition:all 0.2s;width:280px;}
+  .name-input::placeholder{color:var(--muted);}
+  .name-input:focus{border-color:var(--accent);background:var(--accent-s);}
 </style>
 </head>
 <body>
@@ -163,6 +167,9 @@
         <p class="mode-desc">ECR 기반 60문항으로 복합 유형과 두 축(불안/회피)을 정밀 측정합니다.</p>
         <div class="mode-meta"><span>📋 60문항</span><span>⏱ 15분</span></div>
       </div>
+    </div>
+    <div class="name-wrap">
+      <input type="text" id="name-input" class="name-input" placeholder="이름을 입력해주세요" oninput="checkReady()" maxlength="10">
     </div>
     <button class="btn-start" id="btn-start" onclick="startTest()">테스트 시작하기</button>
   </div>
@@ -431,7 +438,17 @@ function selectMode(m) {
   mode = m;
   document.getElementById('card-simple').classList.toggle('selected', m==='simple');
   document.getElementById('card-deep').classList.toggle('selected', m==='deep');
-  document.getElementById('btn-start').classList.add('ready');
+  checkReady();
+}
+
+function checkReady() {
+  const name = document.getElementById('name-input').value.trim();
+  const btn = document.getElementById('btn-start');
+  if (name && mode) {
+    btn.classList.add('ready');
+  } else {
+    btn.classList.remove('ready');
+  }
 }
 
 function showScreen(id, pushState=true) {
@@ -457,6 +474,9 @@ window.addEventListener('popstate', function(e) {
 
 function startTest() {
   if (!mode) return;
+  const name = document.getElementById('name-input').value.trim();
+  if (!name) return;
+  window._userName = name;
   questions = mode==='simple' ? simpleQs : deepQs;
   answers = new Array(questions.length).fill(null);
   current = 0;
@@ -619,7 +639,7 @@ function renderResult(primary, pcts, second, secondPct, anxPct, avoPct) {
 
   // Final msg
   document.getElementById('r-final').innerHTML = `
-    <p class="sec-label" style="justify-content:center;margin-bottom:32px;">당신에게 건네는 말</p>
+    <p class="sec-label" style="justify-content:center;margin-bottom:32px;" id="final-label">당신에게 건네는 말</p>
     <p>${d.msg.replace(/\. /g,'.<br><br>')}</p>`;
 }
 
@@ -693,6 +713,8 @@ function resetTest() {
   document.getElementById('card-simple').classList.remove('selected');
   document.getElementById('card-deep').classList.remove('selected');
   document.getElementById('btn-start').classList.remove('ready');
+  document.getElementById('name-input').value = '';
+  window._userName = null;
 }
 
 function loadFromHash() {
