@@ -46,6 +46,17 @@
   #mouse-glow{pointer-events:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;display:block;}
   .screen{position:relative;z-index:1;}
   .screen{display:none;background:transparent;} .screen.active{display:block;position:relative;z-index:1;background:transparent;}
+  .popup-overlay{position:fixed;inset:0;background:rgba(167,139,250,0.10);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px;z-index:9999;}
+  .popup-overlay.hidden{display:none;}
+  .popup-box{background:rgba(20,20,28,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:48px 44px;max-width:480px;width:100%;}
+  .popup-eyebrow{font-size:10px;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:20px;}
+  .popup-title{font-family:'Noto Serif KR',serif;font-size:24px;font-weight:300;line-height:1.6;margin-bottom:28px;color:var(--text);}
+  .popup-divider{height:1px;background:rgba(255,255,255,0.08);margin-bottom:28px;}
+  .popup-body{font-size:14px;color:var(--dim);line-height:2;margin-bottom:24px;}
+  .popup-note{background:var(--accent-s);border:1px solid rgba(167,139,250,0.2);border-radius:10px;padding:16px 20px;font-size:13px;color:var(--dim);line-height:1.8;margin-bottom:36px;}
+  .popup-note em{color:var(--accent);font-style:normal;}
+  .popup-btn{width:100%;background:var(--accent);color:#0c0c10;border:none;border-radius:100px;padding:16px;font-size:14px;font-family:'Noto Sans KR',sans-serif;font-weight:500;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;}
+  .popup-btn:hover{background:#c4b5fd;}
 
   /* INTRO */
   .intro{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px 24px;}
@@ -194,6 +205,16 @@
 </head>
 <body>
 <canvas id="mouse-glow"></canvas>
+<div class="popup-overlay" id="popup-overlay" onclick="handlePopupClick(event)">
+  <div class="popup-box" id="popup-box">
+    <p class="popup-eyebrow">Adult Attachment Style Test</p>
+    <h2 class="popup-title">나는 관계 안에서<br>어떤 사람인가</h2>
+    <div class="popup-divider"></div>
+    <p class="popup-body">애착 유형은 내가 관계 안에서 어떻게 사랑하고, 어떻게 연결되는지에 대한 패턴입니다. 어린 시절의 경험에서 비롯되어 지금의 나를 만들어온 것들이에요.</p>
+    <div class="popup-note">몇몇 질문은 관계에서의 감정이나 행동을 직접적으로 묻기 때문에 <em>다소 부담스럽게 느껴질 수 있어요.</em> 솔직하게 답할수록 더 정확한 결과를 얻을 수 있습니다.</div>
+    <button class="popup-btn" onclick="closePopup()">확인했어요</button>
+  </div>
+</div>
 
 <!-- INTRO -->
 <div id="s-intro" class="screen active">
@@ -862,7 +883,23 @@ function loadFromHash() {
   } catch(e) { console.error(e); return false; }
 }
 
-window.addEventListener('DOMContentLoaded', () => { loadFromHash(); });
+window.addEventListener('DOMContentLoaded', () => {
+  // 결과 공유 링크로 들어온 경우 팝업 안 띄움
+  if(!window.location.hash.startsWith('#result=')) {
+    document.getElementById('popup-overlay').classList.remove('hidden');
+  } else {
+    document.getElementById('popup-overlay').classList.add('hidden');
+  }
+  loadFromHash();
+});
+
+function closePopup() {
+  document.getElementById('popup-overlay').classList.add('hidden');
+}
+
+function handlePopupClick(e) {
+  if(!document.getElementById('popup-box').contains(e.target)) closePopup();
+}
 window.addEventListener('hashchange', () => { loadFromHash(); });
 
 // Dot halftone mouse effect
