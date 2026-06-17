@@ -100,7 +100,7 @@
   .scroll-hint{display:none;}
   .scroll-line{width:1px;height:48px;background:linear-gradient(to bottom,var(--accent),transparent);animation:scrollAnim 2s ease-in-out infinite;}
   @keyframes scrollAnim{0%,100%{opacity:0.3;transform:scaleY(1);}50%{opacity:1;transform:scaleY(1.2);}}
-  .type-badge{display:inline-block;padding:8px 24px;border-radius:100px;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:32px;}
+  .type-badge{display:inline-block;padding:8px 24px;border-radius:100px;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:32px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
   .result-title{font-family:'Noto Serif KR',serif;font-size:clamp(24px,4vw,44px);font-weight:300;line-height:1.5;margin-bottom:20px;}
   .result-sub{font-size:14px;color:var(--dim);max-width:480px;margin:0 auto;line-height:2;}
   .r-container{max-width:780px;margin:0 auto;padding:0 24px;}
@@ -254,6 +254,7 @@
 <div id="s-result" class="screen">
   <div class="result-wrap" style="max-width:800px;margin:0 auto;padding:80px 24px;">
     <div class="result-hero">
+      <canvas id="r-dot" width="96" height="96" style="margin-bottom:20px;display:block;margin-left:auto;margin-right:auto;"></canvas>
       <div class="type-badge" id="r-badge"></div>
       <h1 class="result-title" id="r-title"></h1>
       <p class="result-sub" id="r-sub"></p>
@@ -612,6 +613,64 @@ function calcResult() {
   renderResult(primary, pcts, second, secondPct, anxPct, avoPct);
 }
 
+function drawTypeDot(canvasId, type) {
+  const cv = document.getElementById(canvasId);
+  if(!cv) return;
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  const w=cv.width, h=cv.height;
+  const cx=w/2, cy=h/2, maxR=Math.min(w,h)*0.46;
+  const SP=maxR/14;
+
+  const colors = {
+    secure:'rgba(177,182,149,0.9)',
+    anxious:'rgba(252,208,161,0.9)',
+    avoidant:'rgba(175,210,233,0.9)',
+    disorganized:'rgba(166,144,164,0.9)'
+  };
+
+  const shapes = {
+    secure: (dx,dy,d) => 1-d/maxR,
+    anxious: (dx,dy,d) => {
+      const ang=Math.atan2(dy,dx);
+      const spike=Math.pow(Math.max(0,Math.cos(6*ang)),2);
+      const radial=1-d/maxR;
+      const cf=Math.max(0,1-d/(maxR*0.3));
+      return radial*(cf+(1-cf)*(0.05+spike*0.95));
+    },
+    avoidant: (dx,dy,d) => {
+      const d1=Math.sqrt((dx+maxR*0.28)**2+dy**2);
+      const d2=Math.sqrt((dx-maxR*0.28)**2+dy**2);
+      const r=maxR*0.62;
+      return Math.min(1,Math.max(Math.max(0,1-d1/r),Math.max(0,1-d2/r)));
+    },
+    disorganized: (dx,dy,d) => {
+      const ang=Math.atan2(dy,dx);
+      const cross=Math.pow(Math.abs(Math.cos(2*ang)),1.5);
+      const radial=1-d/maxR;
+      const cf=Math.max(0,1-d/(maxR*0.28));
+      return radial*(cf+(1-cf)*(0.05+cross*0.95));
+    }
+  };
+
+  const color = colors[type];
+  const shapeFn = shapes[type];
+
+  for(let y=SP/2; y<h; y+=SP)
+    for(let x=SP/2; x<w; x+=SP){
+      const dx=x-cx, dy=y-cy;
+      const d=Math.sqrt(dx**2+dy**2);
+      if(d>maxR) continue;
+      const t=shapeFn(dx,dy,d);
+      if(t<0.03) continue;
+      const r=Math.min(0.2+t*(SP/2-0.1), SP/2-0.2);
+      ctx.beginPath();
+      ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle=color;
+      ctx.fill();
+    }
+}
+
 function renderResult(primary, pcts, second, secondPct, anxPct, avoPct) {
   const d = typeData[primary];
   const tc = d.color;
@@ -620,6 +679,7 @@ function renderResult(primary, pcts, second, secondPct, anxPct, avoPct) {
   const iconEl = `<i data-lucide="${d.emoji}" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:6px;"></i>`;
   document.getElementById('r-badge').innerHTML = `${iconEl}${d.name} · ${d.eng}`;
   safeCreateIcons();
+  drawTypeDot('r-dot', primary);
   document.getElementById('r-badge').className = `type-badge bg-${tc}`;
   document.getElementById('r-title').textContent = d.subtitle;
   document.getElementById('r-sub').innerHTML = `전체 응답 분석 결과, <strong class="c-${tc}">${d.name}(${d.eng})</strong> 성향이 가장 두드러집니다.`;
@@ -797,7 +857,7 @@ function loadFromHash() {
     window._avoPct = pcts.avoidant;
     renderResult(primary, pcts, window._second, window._secondPct, window._anxPct, window._avoPct);
     showScreen('s-result', false);
-    setTimeout(() => animateBars(), 300);
+    setTimeout(() => { animateBars(); drawTypeDot('r-dot', primary); }, 300);
     return true;
   } catch(e) { console.error(e); return false; }
 }
