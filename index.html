@@ -201,6 +201,9 @@
   .name-input::placeholder{color:var(--muted);}
   .name-input:focus{border-color:var(--accent);background:var(--bg2);}
   .name-input:-webkit-autofill,.name-input:-webkit-autofill:hover,.name-input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0px 1000px var(--bg2) inset;-webkit-text-fill-color:var(--text);transition:background-color 5000s ease-in-out 0s;}
+  .site-footer{font-size:11px;color:var(--muted);text-align:center;margin-top:64px;letter-spacing:0.3px;}
+  .site-footer a{color:var(--muted);text-decoration:none;border-bottom:1px solid var(--border);}
+  .site-footer a:hover{color:var(--dim);}
 </style>
 </head>
 <body>
@@ -240,6 +243,7 @@
       <input type="text" id="name-input" class="name-input" placeholder="이름을 입력해주세요" oninput="checkReady()" maxlength="10">
     </div>
     <button class="btn-start" id="btn-start" onclick="startTest()">테스트 시작하기</button>
+    <p class="site-footer">© 애착유형검사.com · <a href="/privacy.html">개인정보처리방침</a></p>
   </div>
 </div>
 
@@ -320,6 +324,7 @@
         결과 공유하기
       </button>
     </div>
+    <p class="site-footer">© 애착유형검사.com · <a href="/privacy.html">개인정보처리방침</a></p>
   </div>
 </div>
 <div class="share-toast" id="share-toast">링크가 복사되었어요 🔗</div>
