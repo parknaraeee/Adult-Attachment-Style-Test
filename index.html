@@ -174,7 +174,8 @@
   .final-section::before{content:'';position:absolute;bottom:-100px;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(167,139,250,0.08) 0%,transparent 70%);}
   .final-text{font-family:'Noto Serif KR',serif;font-size:clamp(16px,2.5vw,20px);font-weight:300;line-height:2.4;color:var(--dim);max-width:580px;margin:0 auto;}
   .final-text em{color:var(--accent);font-style:normal;}
-  .btn-row{position:fixed;left:0;right:0;bottom:0;display:flex;gap:12px;justify-content:center;padding:16px 24px calc(16px + env(safe-area-inset-bottom));background:rgba(12,12,16,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--border);z-index:50;flex-wrap:wrap;}
+  .btn-row{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;display:flex;gap:12px;justify-content:center;padding:10px 16px;background:rgba(23,23,32,0.75);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:100px;z-index:50;flex-wrap:wrap;box-shadow:0 8px 24px rgba(0,0,0,0.35);transition:opacity 0.2s ease;}
+  .btn-row.docked{position:static;left:auto;transform:none;bottom:auto;margin:52px auto 0;padding:0;background:transparent;border:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-radius:0;}
   .btn-retry{background:rgba(23,23,32,0.4);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--border);color:var(--dim);padding:14px 36px;border-radius:100px;font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all 0.2s;}
   .btn-retry:hover{border-color:var(--accent);color:var(--text);}
   .btn-share{background:rgba(167,139,250,0.1);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(167,139,250,0.3);color:var(--accent);padding:14px 36px;border-radius:100px;font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;}
@@ -211,6 +212,8 @@
   .site-footer a:hover{color:var(--dim);}
      #r-cards{margin-top:24px;}
      #s-result .site-footer{margin-top:24px;}
+     .score-section{padding-bottom:60px;}
+     #r-cards .rcard{padding-bottom:60px;}
 </style>
 </head>
 <body>
@@ -347,7 +350,7 @@
      data-full-width-responsive="true"></ins>
 </div>
     <div class="final-msg" id="r-final"></div>
-    <div class="btn-row">
+    <div class="btn-row" id="btn-row">
       <button class="btn-retry" onclick="resetTest()">다시 테스트하기</button>
       <button class="btn-share" onclick="shareResult()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
@@ -631,6 +634,53 @@ const comboData = {
     msg: "가까워지고 싶은데 무서운 것, 사랑받고 싶은데 믿기 어려운 것, 그러면서도 어디로 가야 할지 모르는 것 — 이 세 가지가 동시에 있다는 게 얼마나 소진되는 일인지 압니다. 당신이 혼자 이것을 감당하지 않아도 된다는 것을 알았으면 해요. 도움을 구하는 것이 이 복잡함을 풀어가는 가장 용감한 선택입니다."
   }
 
+};
+
+const TOP_CATEGORY_PHRASES = {
+  secure: {
+    "관계의 신뢰": "특히 파트너를 향한 믿음이 흔들리지 않을 때, 안정적인 모습이 두드러지는 편이에요.",
+    "감정 표현": "특히 힘든 마음을 솔직하게 털어놓을 때, 안정적인 태도가 두드러지는 편이에요.",
+    "혼자 있을 때": "특히 파트너와 떨어져 있는 시간에도, 편안한 마음을 유지하는 편이에요.",
+    "자존감": "특히 스스로의 가치를 의심하지 않을 때, 안정적인 태도가 두드러지는 편이에요.",
+    "갈등": "특히 다툼이 생긴 뒤에도, 대화로 풀어가려는 태도가 두드러지는 편이에요.",
+    "신뢰": "특히 파트너가 곁에 있어줄 거라 믿을 때, 안정적인 모습이 두드러지는 편이에요.",
+    "독립과 연결": "특히 가까움과 혼자만의 시간을 함께 지킬 때, 균형 잡힌 태도가 두드러지는 편이에요.",
+    "친밀감": "특히 관계가 깊어지는 순간에도, 편안함을 유지하는 편이에요."
+  },
+  anxious: {
+    "분리 불안": "특히 연락이 잠깐 뜸해졌을 때, 마음이 크게 흔들리는 편이에요.",
+    "확인 욕구": "특히 상대의 마음을 다시 확인하고 싶어질 때, 불안이 두드러지는 편이에요.",
+    "감정 몰입": "특히 좋아하는 사람이 생겼을 때, 생각이 깊이 몰입되는 편이에요.",
+    "온도 변화": "특히 관계의 온도가 조금만 달라져도, 마음이 크게 요동치는 편이에요.",
+    "거절 민감성": "특히 약속이 미뤄지거나 거절당했다고 느낄 때, 마음이 크게 흔들리는 편이에요.",
+    "연락과 기다림": "특히 답장을 기다리는 시간에, 불안이 유독 커지는 편이에요.",
+    "확인과 안심": "특히 사랑받고 있다는 걸 알면서도, 다시 확인하고 싶어지는 편이에요.",
+    "거절과 민감성": "특히 상대의 반응이 평소와 다를 때, 마음이 쉽게 흔들리는 편이에요.",
+    "관계 몰입": "특히 관계에 마음을 쏟을 때, 온 에너지를 다 쏟는 편이에요.",
+    "자존감과 사랑": "특히 충분히 사랑받고 있는지 확신이 안 설 때, 불안이 두드러지는 편이에요.",
+    "설렘과 불안": "특히 설렘이 가라앉기 시작할 때, 관계가 끝나가는 건 아닐지 걱정하는 편이에요.",
+    "이별 후": "특히 관계가 끝난 뒤에도, 마음을 쉽게 놓지 못하는 편이에요.",
+    "의존과 안정": "특히 파트너의 기분에 따라, 하루의 감정이 크게 달라지는 편이에요.",
+    "존재감": "특히 자신이 얼마나 중요한 사람인지 확인하고 싶을 때, 불안이 두드러지는 편이에요."
+  },
+  avoidant: {
+    "친밀감 불편": "특히 관계가 깊어질수록, 부담을 느끼고 물러서는 편이에요.",
+    "독립성": "특히 나만의 공간과 시간을 지킬 때, 편안함을 느끼는 편이에요.",
+    "감정 표현": "특히 감정을 꺼내 보여야 할 때, 말을 아끼는 편이에요.",
+    "친밀감": "특히 관계가 가까워질수록, 거리를 두고 싶어지는 편이에요.",
+    "갈등": "특히 다툼이 생겼을 때, 대화보다 혼자만의 시간을 먼저 찾는 편이에요.",
+    "신뢰": "특히 누군가를 온전히 믿어야 할 때, 조심스러워지는 편이에요.",
+    "자기 충족": "특히 연인이 없는 순간에도, 스스로 충분하다고 느끼는 편이에요.",
+    "거리두기": "특히 관계에 깊이 빠져들 때, 오히려 밀어내고 싶어지는 편이에요.",
+    "취약함": "특히 약한 모습을 보여야 할 때, 망설이는 편이에요."
+  },
+  disorganized: {
+    "내면의 혼란": "특히 가까워지고 싶은 마음과 도망치고 싶은 마음이 동시에 들 때, 혼란스러움이 두드러지는 편이에요.",
+    "두려움": "특히 가까워진 사람이 결국 떠날 것 같다는 생각이 들 때, 두려움이 두드러지는 편이에요.",
+    "접근과 회피": "특히 다가가고 싶은 마음과 물러서고 싶은 마음이 부딪힐 때, 혼란스러움이 두드러지는 편이에요.",
+    "과거의 영향": "특히 과거의 경험이 지금의 관계에 겹쳐 보일 때, 마음이 복잡해지는 편이에요.",
+    "혼란": "특히 어떻게 행동해야 할지 갈피를 잡기 어려울 때, 혼란스러움이 두드러지는 편이에요."
+  }
 };
 
 const typeData = {
@@ -1010,11 +1060,12 @@ function renderResult(primary, pcts, second, secondPct, anxPct, avoPct) {
     description = d.desc;
   }
 
+  const topPhrase = (window._topCategory && TOP_CATEGORY_PHRASES[primary]) ? TOP_CATEGORY_PHRASES[primary][window._topCategory] : null;
   const cards = document.getElementById('r-cards');
   cards.innerHTML = `
     <p class="sec-label">유형 설명</p>
     <div class="rcard top-${tc}">
-      <div class="rcard-body">${description}${(window._topCategory && combo.type!=='unreliable') ? `<p style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);">특히 <strong style="color:var(--text)">"${window._topCategory}"</strong> 관련 상황에서 이 성향이 가장 뚜렷하게 나타났어요.</p>` : ''}
+      <div class="rcard-body">${description}${(topPhrase && combo.type!=='unreliable') ? `<p style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);">${topPhrase}</p>` : ''}</div>
     </div>`;
 
   document.getElementById('r-scenarios').style.display = 'none';
@@ -1144,6 +1195,15 @@ function handlePopupClick(e) {
   if(!document.getElementById('popup-box').contains(e.target)) closePopup();
 }
 window.addEventListener('hashchange', () => { loadFromHash(); });
+
+function updateBtnRowDock() {
+  const row = document.getElementById('btn-row');
+  if (!row) return;
+  const nearBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 40);
+  row.classList.toggle('docked', nearBottom);
+}
+window.addEventListener('scroll', updateBtnRowDock);
+window.addEventListener('resize', updateBtnRowDock);
 
 // Dot halftone mouse effect
 const glowCanvas = document.getElementById('mouse-glow');
