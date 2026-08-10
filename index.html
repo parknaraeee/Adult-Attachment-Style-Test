@@ -806,28 +806,39 @@ function showLoading() {
 
 function calcResult() {
   const scores = {secure:0,anxious:0,avoidant:0,disorganized:0};
-  const maxS = {secure:0,anxious:0,avoidant:0,disorganized:0};
+  const counts = {secure:0,anxious:0,avoidant:0,disorganized:0};
   let anxSum=0, avoSum=0, anxCount=0, avoCount=0;
+  let totalSum=0, totalCount=0;
 
   questions.forEach((q,i)=>{
     if(answers[i]===null) return;
     scores[q.type] += answers[i];
-    maxS[q.type] += 5;
+    counts[q.type] += 1;
+    totalSum += answers[i];
+    totalCount += 1;
     if(q.axis==='anx'){anxSum+=answers[i];anxCount++;}
     if(q.axis==='avo'){avoSum+=answers[i];avoCount++;}
     if(q.axis==='both'){anxSum+=answers[i];avoSum+=answers[i];anxCount++;avoCount++;}
   });
 
+  const overallAvg = totalCount>0 ? totalSum/totalCount : 3;
+  const SCALE = 25; // 개인 평균 대비 편차 1점당 25%p 이동 — 유형 간 격차를 뚜렷하게 만듦
+
   const pcts={};
-  Object.keys(scores).forEach(t=>{ pcts[t]=maxS[t]>0?Math.round((scores[t]/maxS[t])*100):0; });
+  Object.keys(scores).forEach(t=>{
+    const typeAvg = counts[t]>0 ? scores[t]/counts[t] : overallAvg;
+    pcts[t] = Math.max(0, Math.min(100, Math.round(50 + (typeAvg - overallAvg) * SCALE)));
+  });
 
   const primary = Object.keys(pcts).reduce((a,b)=>pcts[a]>pcts[b]?a:b);
   const sorted = Object.entries(pcts).sort((a,b)=>b[1]-a[1]);
   const second = sorted[1][0];
   const secondPct = sorted[1][1];
 
-  const anxPct = anxCount>0 ? Math.round((anxSum/(anxCount*5))*100) : 0;
-  const avoPct = avoCount>0 ? Math.round((avoSum/(avoCount*5))*100) : 0;
+  const anxAvg = anxCount>0 ? anxSum/anxCount : overallAvg;
+  const avoAvg = avoCount>0 ? avoSum/avoCount : overallAvg;
+  const anxPct = Math.max(0, Math.min(100, Math.round(50 + (anxAvg - overallAvg) * SCALE)));
+  const avoPct = Math.max(0, Math.min(100, Math.round(50 + (avoAvg - overallAvg) * SCALE)));
 
   window._pcts = pcts;
   window._primary = primary;
@@ -840,8 +851,9 @@ function calcResult() {
   renderResult(primary, pcts, second, secondPct, anxPct, avoPct);
 }
 
-function getComboKey(sorted) {
-  return sorted.join('_');
+const TYPE_ORDER = ['secure','anxious','avoidant','disorganized'];
+function getComboKey(list) {
+  return TYPE_ORDER.filter(t => list.includes(t)).join('_');
 }
 
 function getComboInterpretation(pcts) {
@@ -866,7 +878,7 @@ function getComboInterpretation(pcts) {
 
   if (inRange.length === 1) return { type: 'single' };
 
-  const key = getComboKey(inRange.sort());
+const key = getComboKey(inRange);
   const combo = comboData[key];
   if (combo) return { type: 'combo', key, data: combo };
 
@@ -948,7 +960,7 @@ function renderResult(primary, pcts, second, secondPct, anxPct, avoPct) {
   document.getElementById('r-title').textContent = d.subtitle;
   document.getElementById('r-sub').innerHTML = `전체 응답 분석 결과, <strong class="c-${tc}">${d.name}(${d.eng})</strong> 성향이 가장 두드러집니다.`;
 
-  // Axes (deep only)
+ // Axes (deep only)
   const axSec = document.getElementById('axes-section');
   if (window._isDeep) {
     axSec.style.display = 'block';
@@ -962,51 +974,58 @@ function renderResult(primary, pcts, second, secondPct, anxPct, avoPct) {
       avoPct>=70?'높음 — 친밀감과 의존을 불편하게 느낍니다':
       avoPct>=40?'중간 — 상황에 따라 거리를 두려는 경향이 있습니다':
       '낮음 — 친밀감을 비교적 편안하게 받아들입니다';
-
-    // Combo analysis
-    const comboWrap = document.getElementById('combo-analysis');
-    let comboKey = null;
-    if(secondPct >= 55) {
-      const pairs = [`${primary}+${second}`,`${second}+${primary}`];
-      for(const p of pairs) { if(comboData[p]){comboKey=p;break;} }
-    }
-    if(comboKey) {
-      comboWrap.innerHTML = `
-        <div class="combo-box">
-          <p class="combo-title">복합 유형 분석</p>
-          <p class="combo-body">${comboData[comboKey]}</p>
-        </div>`;
-    } else { comboWrap.innerHTML=''; }
   } else { axSec.style.display='none'; }
+
+  // 복합 유형 / 신뢰도 판정 (모드 무관하게 항상 계산)
+  const combo = getComboInterpretation(pcts);
+  const noteEl = document.getElementById('combo-note');
+  if (combo.type === 'unreliable') {
+    noteEl.textContent = combo.note;
+    noteEl.style.display = 'block';
+    noteEl.style.borderColor = '#d4a853';
+    noteEl.style.background = 'rgba(212,168,83,0.08)';
+  } else if (combo.type === 'combo' && combo.data && combo.data.note) {
+    noteEl.textContent = combo.data.note;
+    noteEl.style.display = 'block';
+    noteEl.style.borderColor = 'var(--accent)';
+    noteEl.style.background = 'var(--accent-s)';
+  } else if (combo.type === 'combo_generic') {
+    noteEl.textContent = combo.note;
+    noteEl.style.display = 'block';
+  } else {
+    noteEl.style.display = 'none';
+  }
+
+  const content = (combo.type === 'combo' && combo.data) ? combo.data : d;
 
   // Cards
   const cards = document.getElementById('r-cards');
   cards.innerHTML = `
     <p class="sec-label">상세 분석</p>
     <div class="rcard top-${tc}">
-      <p class="rcard-label c-${tc}">${d.strength_title}</p>
+      <p class="rcard-label c-${tc}">${content.strength_title}</p>
       <p class="rcard-title">이미 가진 것</p>
-      <p class="rcard-body">${d.strength}</p>
-      <div class="tag-row">${d.tags.map(t=>`<span class="tag tag-${tc}">${t}</span>`).join('')}</div>
+      <p class="rcard-body">${content.strength}</p>
+      <div class="tag-row">${content.tags.map(t=>`<span class="tag tag-${tc}">${t}</span>`).join('')}</div>
     </div>
     <div class="rcard">
-      <p class="rcard-label" style="color:#f87171">${d.shadow_title}</p>
+      <p class="rcard-label" style="color:#f87171">${content.shadow_title}</p>
       <p class="rcard-title">조심할 것</p>
-      <p class="rcard-body">${d.shadow}</p>
+      <p class="rcard-body">${content.shadow}</p>
     </div>
     <div class="rcard">
-      <p class="rcard-label" style="color:var(--accent)">${d.growth_title}</p>
+      <p class="rcard-label" style="color:var(--accent)">${content.growth_title}</p>
       <p class="rcard-title">앞으로의 방향</p>
-      <p class="rcard-body">${d.growth}</p>
+      <p class="rcard-body">${content.growth}</p>
     </div>`;
 
   // Scenarios (deep only)
   const scenSec = document.getElementById('r-scenarios');
-  if(window._isDeep && d.scenarios) {
+  if(window._isDeep && content.scenarios) {
     scenSec.style.display = 'block';
-    document.getElementById('scenarios-wrap').innerHTML = d.scenarios.map(sc=>`
+    document.getElementById('scenarios-wrap').innerHTML = content.scenarios.map(sc=>`
       <div class="scenario-card">
-        <span class="scenario-icon"><i data-lucide="${sc.icon}" style="width:22px;height:22px;"></i></span>
+        <span class="scenario-icon"><i data-lucide="${sc.icon || 'sparkle'}" style="width:22px;height:22px;"></i></span>
         <p class="scenario-title">${sc.title}</p>
         <p class="scenario-body">${sc.body}</p>
         <span class="speech">${sc.speech}</span>
@@ -1018,11 +1037,10 @@ function renderResult(primary, pcts, second, secondPct, anxPct, avoPct) {
   const userName = window._userName || '당신';
   document.getElementById('r-final').innerHTML = `
     <p class="sec-label" style="justify-content:center;margin-bottom:32px;" id="final-label"></p>
-    <p>${d.msg.replace(/\. /g,'.<br><br>')}</p>`;
+    <p>${content.msg.replace(/\. /g,'.<br><br>')}</p>`;
   document.getElementById('final-label').textContent = `${userName}에게 건네는 말`;
   setTimeout(safeCreateIcons, 50);
 }
-
 function animateBars() {
   const p = window._pcts;
   setTimeout(()=>{
