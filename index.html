@@ -343,9 +343,6 @@
      data-ad-slot="1031576253"
      data-ad-format="auto"
      data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
 </div>
     <div class="final-msg" id="r-final"></div>
     <div class="btn-row">
@@ -804,7 +801,7 @@ function prevQ() { if(current>0){ history.back(); } }
 
 function showLoading() {
   showScreen('s-loading');
-  setTimeout(()=>{ calcResult(); showScreen('s-result'); setTimeout(()=>animateBars(),150); }, 2000);
+  setTimeout(()=>{ calcResult(); showScreen('s-result'); setTimeout(()=>{animateBars(); try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}},150); }, 2000);
 }
 
 function calcResult() {
