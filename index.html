@@ -174,7 +174,7 @@
   .final-section::before{content:'';position:absolute;bottom:-100px;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(167,139,250,0.08) 0%,transparent 70%);}
   .final-text{font-family:'Noto Serif KR',serif;font-size:clamp(16px,2.5vw,20px);font-weight:300;line-height:2.4;color:var(--dim);max-width:580px;margin:0 auto;}
   .final-text em{color:var(--accent);font-style:normal;}
-  .btn-row{display:flex;gap:12px;justify-content:center;margin-top:52px;flex-wrap:wrap;}
+  .btn-row{position:fixed;left:0;right:0;bottom:0;display:flex;gap:12px;justify-content:center;padding:16px 24px calc(16px + env(safe-area-inset-bottom));background:rgba(12,12,16,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--border);z-index:50;flex-wrap:wrap;}
   .btn-retry{background:rgba(23,23,32,0.4);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--border);color:var(--dim);padding:14px 36px;border-radius:100px;font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all 0.2s;}
   .btn-retry:hover{border-color:var(--accent);color:var(--text);}
   .btn-share{background:rgba(167,139,250,0.1);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(167,139,250,0.3);color:var(--accent);padding:14px 36px;border-radius:100px;font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;}
@@ -209,6 +209,8 @@
   .seo-content strong{color:var(--dim);font-weight:500;}
   .site-footer a{color:var(--muted);text-decoration:none;border-bottom:1px solid var(--border);}
   .site-footer a:hover{color:var(--dim);}
+     #r-cards{margin-top:24px;}
+     #s-result .site-footer{margin-top:24px;}
 </style>
 </head>
 <body>
@@ -296,7 +298,7 @@
 
 <!-- RESULT -->
 <div id="s-result" class="screen">
-  <div class="result-wrap" style="max-width:800px;margin:0 auto;padding:80px 24px;">
+  <div class="result-wrap" style="max-width:800px;margin:0 auto;padding:80px 24px 110px;">
     <div class="result-hero">
       <canvas id="r-dot" width="96" height="96" style="margin-bottom:20px;display:block;margin-left:auto;margin-right:auto;"></canvas>
       <div class="type-badge" id="r-badge"></div>
@@ -335,7 +337,7 @@
       <p class="sec-label" style="margin-top:40px;">일상 장면 속의 나</p>
       <div id="scenarios-wrap"></div>
     </div>
-       <div style="margin:32px 0;text-align:center;">
+       <div style="margin:16px 0;text-align:center;">
 <!-- 결과화면_광고1 -->
 <ins class="adsbygoogle"
      style="display:block"
@@ -1012,7 +1014,7 @@ function renderResult(primary, pcts, second, secondPct, anxPct, avoPct) {
   cards.innerHTML = `
     <p class="sec-label">유형 설명</p>
     <div class="rcard top-${tc}">
-      <div class="rcard-body">${description}${(window._topCategory && combo.type!=='unreliable') ? `<p style="margin-top:8px;">특히 <strong style="color:var(--text)">"${window._topCategory}"</strong> 관련 상황에서 이 성향이 가장 뚜렷하게 나타났어요.</p>` : ''}</div>
+      <div class="rcard-body">${description}${(window._topCategory && combo.type!=='unreliable') ? `<p style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);">특히 <strong style="color:var(--text)">"${window._topCategory}"</strong> 관련 상황에서 이 성향이 가장 뚜렷하게 나타났어요.</p>` : ''}
     </div>`;
 
   document.getElementById('r-scenarios').style.display = 'none';
