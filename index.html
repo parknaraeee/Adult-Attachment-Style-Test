@@ -368,21 +368,21 @@
 // reverse: true면 역채점
 
 const simpleQs = [
-  {cat:"관계의 신뢰",text:"파트너가 나를 진심으로 아끼고 있다는 게 느껴질 때가 많다.",type:"secure"},
-  {cat:"감정 표현",text:"파트너에게 힘든 일이 있었을 때, 솔직하게 털어놓는 편이다.",type:"secure"},
-  {cat:"혼자 있을 때",text:"파트너와 며칠 연락이 없어도 관계가 흔들린다는 느낌보다는 각자의 시간이라고 느낀다.",type:"secure"},
-  {cat:"자존감",text:"나는 누군가가 나를 사랑할 만한 사람이라고 생각한다.",type:"secure"},
-  {cat:"갈등",text:"파트너와 다툰 뒤, 시간이 지나면 직접 이야기를 꺼내는 편이다.",type:"secure"},
-  {cat:"분리 불안",text:"파트너에게 연락했는데 한참 답장이 없으면 신경이 쓰이기 시작한다.",type:"anxious"},
-  {cat:"확인 욕구",text:"파트너가 나를 어떻게 생각하는지 종종 확인하고 싶어진다.",type:"anxious"},
-  {cat:"감정 몰입",text:"좋아하는 사람이 생기면 그 사람 생각이 하루 종일 머릿속을 맴도는 편이다.",type:"anxious"},
-  {cat:"온도 변화",text:"처음만큼 연락이 줄거나 분위기가 바뀌면 뭔가 잘못된 건 아닐까 걱정된다.",type:"anxious"},
-  {cat:"거절 민감성",text:"파트너가 약속을 미루거나 바쁘다고 하면 거절당하는 느낌이 들 때가 있다.",type:"anxious"},
-  {cat:"친밀감 불편",text:"관계가 깊어질수록 오히려 부담스럽거나 숨막히는 느낌이 들 때가 있다.",type:"avoidant"},
-  {cat:"독립성",text:"파트너에게 너무 많이 의지하게 되는 상황이 불편하게 느껴진다.",type:"avoidant"},
-  {cat:"감정 표현",text:"속마음이나 감정을 파트너에게 꺼내놓는 것이 쉽지 않다.",type:"avoidant"},
-  {cat:"내면의 혼란",text:"가까워지고 싶은 마음과 거리를 두고 싶은 마음이 동시에 드는 경험이 있다.",type:"disorganized"},
-  {cat:"두려움",text:"친해진 사람이 결국에는 나를 실망시키거나 떠날 것 같다는 생각이 들 때가 있다.",type:"disorganized"},
+  {cat:"관계의 신뢰",text:"파트너가 나를 진심으로 아끼고 있다는 게 느껴질 때가 많다.",type:"secure",axis:"none"},
+  {cat:"감정 표현",text:"파트너에게 힘든 일이 있었을 때, 솔직하게 털어놓는 편이다.",type:"secure",axis:"none"},
+  {cat:"혼자 있을 때",text:"파트너와 며칠 연락이 없어도 관계가 흔들린다는 느낌보다는 각자의 시간이라고 느낀다.",type:"secure",axis:"none"},
+  {cat:"자존감",text:"나는 누군가가 나를 사랑할 만한 사람이라고 생각한다.",type:"secure",axis:"none"},
+  {cat:"갈등",text:"파트너와 다툰 뒤, 시간이 지나면 직접 이야기를 꺼내는 편이다.",type:"secure",axis:"none"},
+  {cat:"분리 불안",text:"파트너에게 연락했는데 한참 답장이 없으면 신경이 쓰이기 시작한다.",type:"anxious",axis:"anx"},
+  {cat:"확인 욕구",text:"파트너가 나를 어떻게 생각하는지 종종 확인하고 싶어진다.",type:"anxious",axis:"anx"},
+  {cat:"감정 몰입",text:"좋아하는 사람이 생기면 그 사람 생각이 하루 종일 머릿속을 맴도는 편이다.",type:"anxious",axis:"anx"},
+  {cat:"온도 변화",text:"처음만큼 연락이 줄거나 분위기가 바뀌면 뭔가 잘못된 건 아닐까 걱정된다.",type:"anxious",axis:"anx"},
+  {cat:"거절 민감성",text:"파트너가 약속을 미루거나 바쁘다고 하면 거절당하는 느낌이 들 때가 있다.",type:"anxious",axis:"anx"},
+  {cat:"친밀감 불편",text:"관계가 깊어질수록 오히려 부담스럽거나 숨막히는 느낌이 들 때가 있다.",type:"avoidant",axis:"avo"},
+  {cat:"독립성",text:"파트너에게 너무 많이 의지하게 되는 상황이 불편하게 느껴진다.",type:"avoidant",axis:"avo"},
+  {cat:"감정 표현",text:"속마음이나 감정을 파트너에게 꺼내놓는 것이 쉽지 않다.",type:"avoidant",axis:"avo"},
+  {cat:"내면의 혼란",text:"가까워지고 싶은 마음과 거리를 두고 싶은 마음이 동시에 드는 경험이 있다.",type:"disorganized",axis:"both"},
+  {cat:"두려움",text:"친해진 사람이 결국에는 나를 실망시키거나 떠날 것 같다는 생각이 들 때가 있다.",type:"disorganized",axis:"both"},
 ];
 
 const deepQs = [
@@ -860,15 +860,12 @@ function calcResult() {
   const scores = {secure:0,anxious:0,avoidant:0,disorganized:0};
   const counts = {secure:0,anxious:0,avoidant:0,disorganized:0};
   let anxSum=0, avoSum=0, anxCount=0, avoCount=0;
-  let totalSum=0, totalCount=0;
 
   const catScores = {};
   questions.forEach((q,i)=>{
     if(answers[i]===null) return;
     scores[q.type] += answers[i];
     counts[q.type] += 1;
-    totalSum += answers[i];
-    totalCount += 1;
     if(!catScores[q.type]) catScores[q.type] = {};
     if(!catScores[q.type][q.cat]) catScores[q.type][q.cat] = {sum:0,count:0};
     catScores[q.type][q.cat].sum += answers[i];
@@ -878,16 +875,39 @@ function calcResult() {
     if(q.axis==='both'){anxSum+=answers[i];avoSum+=answers[i];anxCount++;avoCount++;}
   });
 
-  const overallAvg = totalCount>0 ? totalSum/totalCount : 3;
-  const SCALE = 25; // 개인 평균 대비 편차 1점당 25%p 이동 — 유형 간 격차를 뚜렷하게 만듦
+  const SCALE = 25; // 기준선 대비 편차 1점당 25%p 이동
 
-  const pcts={};
-  Object.keys(scores).forEach(t=>{
-    const typeAvg = counts[t]>0 ? scores[t]/counts[t] : overallAvg;
-    pcts[t] = Math.max(0, Math.min(100, Math.round(50 + (typeAvg - overallAvg) * SCALE)));
+  // ── 1) 주 유형 판정: 불안/회피 두 축만으로 사분면 판정 ──────────────
+  // 기준선은 척도 중간값(3점) 고정값을 쓴다. 만약 "이 사람의 불안+회피
+  // 문항 평균"처럼 자기참조 기준선을 쓰면, 두 축이 동시에 높은 혼란형
+  // 응답자의 경우 기준선 자체가 같이 올라가버려서 서로 상쇄되어
+  // "정상"으로 오판정되는 문제가 생긴다 (시뮬레이션으로 확인됨).
+  // 고정 기준선을 쓰면 이 문제가 없고, 안정형/혼란형 문항의 동의 편향도
+  // 애초에 계산에 섞이지 않는다.
+  const axisBaseline = 3;
+  const anxAvg = anxCount>0 ? anxSum/anxCount : axisBaseline;
+  const avoAvg = avoCount>0 ? avoSum/avoCount : axisBaseline;
+  const anxPct = Math.max(0, Math.min(100, Math.round(50 + (anxAvg - axisBaseline) * SCALE)));
+  const avoPct = Math.max(0, Math.min(100, Math.round(50 + (avoAvg - axisBaseline) * SCALE)));
+
+  const anxHigh = anxPct > 50;
+  const avoHigh = avoPct > 50;
+  let primary;
+  if (anxHigh && avoHigh) primary = 'disorganized';
+  else if (anxHigh) primary = 'anxious';
+  else if (avoHigh) primary = 'avoidant';
+  else primary = 'secure';
+
+  // ── 2) 결과 화면에 보여줄 4개 바(bar) 값: 각 유형 자기 문항 평균을
+  // 고정된 척도 중간값(3점) 기준으로 계산. 개인 전체 평균을 기준으로
+  // 삼지 않으므로 안정형/혼란형 문항 값이 판정에 다시 섞여 들어가지 않는다.
+  // 이 값은 설명/시각화용이며 primary 판정에는 쓰이지 않는다.
+  const FIXED_MID = 3;
+  const pcts = {anxious: anxPct, avoidant: avoPct};
+  ['secure','disorganized'].forEach(t=>{
+    const typeAvg = counts[t]>0 ? scores[t]/counts[t] : FIXED_MID;
+    pcts[t] = Math.max(0, Math.min(100, Math.round(50 + (typeAvg - FIXED_MID) * SCALE)));
   });
-
-  const primary = Object.keys(pcts).reduce((a,b)=>pcts[a]>pcts[b]?a:b);
 
   let topCategory = null;
   if(catScores[primary]) {
@@ -897,14 +917,10 @@ function calcResult() {
   }
   window._topCategory = topCategory;
 
-  const sorted = Object.entries(pcts).sort((a,b)=>b[1]-a[1]);
-  const second = sorted[1][0];
-  const secondPct = sorted[1][1];
-
-  const anxAvg = anxCount>0 ? anxSum/anxCount : overallAvg;
-  const avoAvg = avoCount>0 ? avoSum/avoCount : overallAvg;
-  const anxPct = Math.max(0, Math.min(100, Math.round(50 + (anxAvg - overallAvg) * SCALE)));
-  const avoPct = Math.max(0, Math.min(100, Math.round(50 + (avoAvg - overallAvg) * SCALE)));
+  // second: primary를 제외한 나머지 중 가장 높은 유형 (혼합 유형 해석용)
+  const sorted = Object.entries(pcts).filter(([t])=>t!==primary).sort((a,b)=>b[1]-a[1]);
+  const second = sorted[0][0];
+  const secondPct = sorted[0][1];
 
   window._pcts = pcts;
   window._primary = primary;
@@ -922,9 +938,8 @@ function getComboKey(list) {
   return TYPE_ORDER.filter(t => list.includes(t)).join('_');
 }
 
-function getComboInterpretation(pcts) {
+function getComboInterpretation(pcts, primary) {
   const entries = Object.entries(pcts).sort((a,b) => b[1]-a[1]);
-  const top = entries[0][1];
   const THRESHOLD = 15;
 
   const values = entries.map(e => e[1]);
@@ -936,7 +951,12 @@ function getComboInterpretation(pcts) {
     };
   }
 
-  const inRange = entries.filter(e => top - e[1] < THRESHOLD).map(e => e[0]);
+  // primary(불안/회피 축으로 판정된 주 유형)를 기준으로 근접한 유형을 묶는다.
+  // pcts 자체의 최댓값이 아니라 primary 기준으로 비교해야, 표시용으로 별도
+  // 계산되는 안정형/혼란형 바 값 때문에 combo가 실제 판정과 어긋나지 않는다.
+  const top = pcts[primary];
+  const inRange = entries.filter(e => Math.abs(top - e[1]) < THRESHOLD).map(e => e[0]);
+  if (!inRange.includes(primary)) inRange.unshift(primary);
 
   if (inRange.length === 1) return { type: 'single' };
 
@@ -1039,7 +1059,7 @@ function renderResult(primary, pcts, second, secondPct, anxPct, avoPct) {
   } else { axSec.style.display='none'; }
 
   // 복합 유형 / 신뢰도 판정 (모드 무관하게 항상 계산)
-  const combo = getComboInterpretation(pcts);
+  const combo = getComboInterpretation(pcts, primary);
   const noteEl = document.getElementById('combo-note');
   if (combo.type === 'unreliable') {
     noteEl.textContent = combo.note;
