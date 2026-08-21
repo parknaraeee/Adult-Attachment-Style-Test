@@ -6,6 +6,41 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://xn--c79ao69afndh2beykqtq.com/types/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://xn--c79ao69afndh2beykqtq.com/types/secure.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--c79ao69afndh2beykqtq.com/types/anxious.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--c79ao69afndh2beykqtq.com/types/avoidant.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--c79ao69afndh2beykqtq.com/types/disorganized.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--c79ao69afndh2beykqtq.com/guide/anxious-vs-avoidant.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--c79ao69afndh2beykqtq.com/guide/becoming-secure.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://xn--c79ao69afndh2beykqtq.com/privacy.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
