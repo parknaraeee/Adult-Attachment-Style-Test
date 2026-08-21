@@ -81,6 +81,29 @@
   width: 100%;
 }
 
+/* 스크롤 중엔 하단에 떠있다가, 원래 위치(cta-anchor)에 도달하면 제자리에 고정되는 CTA */
+.cta-anchor {
+  display: block;
+  height: 0;
+}
+.cta-float {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 20px;
+  z-index: 50;
+  width: calc(100% - 48px);
+  max-width: 400px;
+}
+.cta-float.docked {
+  position: static;
+  left: auto;
+  transform: none;
+  bottom: auto;
+  width: 100%;
+  max-width: none;
+}
+
 /* ── 3. 콘텐츠 페이지 레이아웃/컴포넌트 (유형·가이드·허브 페이지 전용) ── */
 *{ box-sizing:border-box; }
 body{ margin:0; background:var(--bg); color:var(--text); font-family:'Noto Sans KR',sans-serif; line-height:1.7; }
