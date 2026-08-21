@@ -93,7 +93,7 @@
   bottom: 20px;
   z-index: 50;
   width: calc(100% - 48px);
-  max-width: 400px;
+  max-width: 672px; /* .wrap 콘텐츠 폭(720px)에서 좌우 패딩(24px×2) 뺀 값 — 도킹 시 폭과 동일해서 전환이 튀지 않음 */
 }
 .cta-float.docked {
   position: static;
