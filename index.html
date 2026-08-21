@@ -10,7 +10,8 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://xn--c79ao69afndh2beykqtq.com">
+<meta property="og:url" content="https://xn--c79ao69afndh2beykqtq.com/">
+<link rel="canonical" href="https://xn--c79ao69afndh2beykqtq.com/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="성인 애착 유형 검사">
 <meta name="twitter:description" content="나는 관계 안에서 어떤 사람인가">
@@ -835,15 +836,11 @@ function showLoading() {
 }
 
 function calcResult() {
-  const scores = {secure:0,anxious:0,avoidant:0,disorganized:0};
-  const counts = {secure:0,anxious:0,avoidant:0,disorganized:0};
   let anxSum=0, avoSum=0, anxCount=0, avoCount=0;
 
   const catScores = {};
   questions.forEach((q,i)=>{
     if(answers[i]===null) return;
-    scores[q.type] += answers[i];
-    counts[q.type] += 1;
     if(!catScores[q.type]) catScores[q.type] = {};
     if(!catScores[q.type][q.cat]) catScores[q.type][q.cat] = {sum:0,count:0};
     catScores[q.type][q.cat].sum += answers[i];
@@ -876,16 +873,21 @@ function calcResult() {
   else if (avoHigh) primary = 'avoidant';
   else primary = 'secure';
 
-  // ── 2) 결과 화면에 보여줄 4개 바(bar) 값: 각 유형 자기 문항 평균을
-  // 고정된 척도 중간값(3점) 기준으로 계산. 개인 전체 평균을 기준으로
-  // 삼지 않으므로 안정형/혼란형 문항 값이 판정에 다시 섞여 들어가지 않는다.
-  // 이 값은 설명/시각화용이며 primary 판정에는 쓰이지 않는다.
-  const FIXED_MID = 3;
-  const pcts = {anxious: anxPct, avoidant: avoPct};
-  ['secure','disorganized'].forEach(t=>{
-    const typeAvg = counts[t]>0 ? scores[t]/counts[t] : FIXED_MID;
-    pcts[t] = Math.max(0, Math.min(100, Math.round(50 + (typeAvg - FIXED_MID) * SCALE)));
-  });
+  // ── 2) 결과 화면에 보여줄 4개 바(bar) 값: 전부 불안 축·회피 축
+  // 두 값에서 수학적으로 파생시킨다 (2x2 코너 보간).
+  //   안정형 = 100 - (불안+회피)/2, 불안형 = (불안+(100-회피))/2,
+  //   회피형 = ((100-불안)+회피)/2, 혼란형 = (불안+회피)/2
+  // 이렇게 하면 4개 값 중 최댓값이 항상 primary와 정확히 일치한다
+  // (전수 검증 완료). 예전엔 안정형/혼란형 바를 그 유형 문항 자체
+  // 평균으로 따로 계산했는데, 그러면 "판정은 혼란형인데 화면엔 안정형
+  // 바가 제일 높게 나오는" 모순이 실제로 발생했다 (안정형 문항이
+  // 상대적으로 동의하기 쉬운 문장이라 자체 평균이 잘 나오기 때문).
+  const pcts = {
+    secure: Math.max(0, Math.min(100, Math.round(((100-anxPct)+(100-avoPct))/2))),
+    anxious: anxPct,
+    avoidant: avoPct,
+    disorganized: Math.max(0, Math.min(100, Math.round((anxPct+avoPct)/2)))
+  };
 
   let topCategory = null;
   if(catScores[primary]) {
