@@ -884,8 +884,8 @@ function calcResult() {
   // 상대적으로 동의하기 쉬운 문장이라 자체 평균이 잘 나오기 때문).
   const pcts = {
     secure: Math.max(0, Math.min(100, Math.round(((100-anxPct)+(100-avoPct))/2))),
-    anxious: anxPct,
-    avoidant: avoPct,
+    anxious: Math.max(0, Math.min(100, Math.round((anxPct+(100-avoPct))/2))),
+    avoidant: Math.max(0, Math.min(100, Math.round(((100-anxPct)+avoPct)/2))),
     disorganized: Math.max(0, Math.min(100, Math.round((anxPct+avoPct)/2)))
   };
 
