@@ -1,0 +1,165 @@
+/* ============================================================
+   애착유형검사.com — 공용 스타일시트
+   메인 퀴즈(index.html) + 유형 상세(/types/*.html) + 가이드(/guide/*.html)
+   + 허브(/types/index.html) — 전체 페이지가 이 파일 하나만 링크합니다.
+   섹션 1·2는 모든 페이지가, 섹션 3은 콘텐츠 페이지(유형/가이드/허브)만
+   사용합니다. 스타일을 바꾸려면 이 파일만 고치면 전체 사이트에 반영됩니다.
+   ============================================================ */
+
+/* ── 1. 디자인 토큰 (색상 변수) ── */
+:root {
+  --bg: #0c0c10;
+  --bg2: #171720;
+  --bg3: #1c1c26;
+  --border: #38384f;
+  --border-h: #5a5a7a;
+  --text: #f0eeff;
+  --dim: #c4c0d8;
+  --muted: #8a86a0;
+  --accent: #a78bfa;
+  --accent-s: rgba(167, 139, 250, 0.1);
+
+  --secure: #B1B695;
+  --secure-s: rgba(177, 182, 149, 0.1);
+  --anxious: #FCD0A1;
+  --anxious-s: rgba(252, 208, 161, 0.1);
+  --avoidant: #AFD2E9;
+  --avoidant-s: rgba(175, 210, 233, 0.1);
+  --disorganized: #A690A4;
+  --disorganized-s: rgba(166, 144, 164, 0.1);
+}
+
+/* ── 2. 버튼 컴포넌트 (전체 페이지 공용) ── */
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 36px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.btn-pill-primary {
+  background: var(--accent);
+  color: #0c0c10;
+  border: none;
+}
+.btn-pill-primary:hover {
+  background: #c4b5fd;
+  transform: translateY(-1px);
+}
+.btn-pill-outline {
+  background: rgba(23, 23, 32, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  color: var(--dim);
+}
+.btn-pill-outline:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+.btn-pill-accent-outline {
+  background: rgba(167, 139, 250, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  color: var(--accent);
+}
+.btn-pill-accent-outline:hover {
+  background: rgba(167, 139, 250, 0.2);
+  border-color: var(--accent);
+}
+.btn-pill-block {
+  display: flex;
+  width: 100%;
+}
+
+/* ── 3. 콘텐츠 페이지 레이아웃/컴포넌트 (유형·가이드·허브 페이지 전용) ── */
+*{ box-sizing:border-box; }
+body{ margin:0; background:var(--bg); color:var(--text); font-family:'Noto Sans KR',sans-serif; line-height:1.7; }
+a{ color:inherit; text-decoration:none; }
+
+.wrap{ max-width:720px; margin:0 auto; padding:56px 24px 100px; }
+
+.breadcrumb{ font-size:12px; color:var(--dim); margin-bottom:32px; }
+.breadcrumb a:hover{ color:var(--accent); }
+
+.eyebrow{ font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin:0 0 12px; }
+
+h1{ font-family:'Noto Serif KR',serif; font-weight:400; font-size:30px; margin:0 0 16px; line-height:1.4; }
+h2{ font-family:'Noto Serif KR',serif; font-weight:400; font-size:19px; margin:44px 0 16px; }
+
+.lead{ font-size:14px; color:var(--dim); line-height:1.9; margin-bottom:40px; }
+.subtitle{ font-size:16px; color:var(--dim); margin:0 0 32px; }
+
+.tags{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:40px; }
+.tag{ font-size:12px; padding:6px 12px; border-radius:999px; background:var(--bg3); border:1px solid var(--border); color:var(--dim); }
+
+.card{ background:var(--bg2); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:14px; }
+.card p{ margin:0; color:var(--dim); font-size:14px; line-height:1.85; }
+
+ul.feature-list{ margin:0; padding-left:20px; list-style:disc; }
+ul.feature-list li{ margin-bottom:8px; color:var(--dim); font-size:14px; line-height:1.8; }
+
+.scenario-card{ background:var(--bg2); border:1px solid var(--border); border-radius:14px; padding:20px 24px; margin-bottom:12px; }
+.scenario-title{ font-size:13px; color:var(--accent); margin:0 0 8px; font-weight:500; }
+.scenario-body{ font-size:14px; color:var(--dim); margin:0 0 10px; line-height:1.8; }
+.scenario-speech{ font-size:13px; color:var(--text); margin:0; font-style:italic; padding-top:10px; border-top:1px solid var(--border); }
+
+.msg-card{ background:var(--bg3); border:1px solid var(--border); border-radius:14px; padding:28px; margin:40px 0; }
+.msg-card p{ margin:0; color:var(--text); font-size:14px; line-height:2; font-family:'Noto Serif KR',serif; }
+
+.faq-item{ margin-bottom:20px; }
+.faq-q{ font-size:14px; color:var(--text); font-weight:500; margin:0 0 8px; }
+.faq-a{ font-size:13px; color:var(--dim); margin:0; line-height:1.8; }
+
+ul.references{ margin:0; padding-left:18px; list-style:decimal; }
+ul.references li{ font-size:12px; color:var(--dim); line-height:1.9; margin-bottom:6px; }
+
+.step-list{ margin:0; padding:0; list-style:none; counter-reset:step; }
+.step-list li{ counter-increment:step; background:var(--bg2); border:1px solid var(--border); border-radius:14px; padding:20px 20px 20px 52px; margin-bottom:12px; position:relative; font-size:14px; color:var(--dim); line-height:1.8; }
+.step-list li::before{ content:counter(step); position:absolute; left:18px; top:18px; width:22px; height:22px; border-radius:50%; background:var(--accent); color:#0c0c10; font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; }
+.step-list strong{ color:var(--text); font-weight:500; }
+
+.compare-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px; }
+.compare-card{ background:var(--bg2); border:1px solid var(--border); border-radius:14px; padding:20px; }
+.compare-name{ font-size:15px; font-weight:500; margin:0 0 12px; }
+.compare-card ul{ margin:0; padding-left:18px; list-style:disc; }
+.compare-card li{ font-size:13px; color:var(--dim); line-height:1.8; margin-bottom:6px; }
+
+.type-card{ display:block; background:var(--bg2); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:14px; }
+.type-card:hover{ border-color:var(--accent); }
+.type-name{ font-size:18px; font-weight:500; margin:0 0 6px; }
+.type-sub{ font-size:13px; color:var(--dim); margin:0 0 12px; }
+.type-desc{ font-size:13px; color:var(--dim); line-height:1.8; margin:0; }
+
+.other-types-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:16px; }
+.other-type-card{ display:flex; flex-direction:column; gap:4px; background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:16px; }
+.other-type-card:hover{ border-color:var(--accent); }
+.other-type-name{ font-size:14px; font-weight:500; }
+.other-type-sub{ font-size:11px; color:var(--dim); line-height:1.5; }
+
+.c-secure{ color:var(--secure); }
+.c-anxious{ color:var(--anxious); }
+.c-avoidant{ color:var(--avoidant); }
+.c-disorganized{ color:var(--disorganized); }
+
+.link-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
+.link-row a{ font-size:13px; color:var(--dim); border-bottom:1px solid var(--border); padding-bottom:2px; }
+
+.cta-wrap{ margin:48px 0 16px; }
+
+.site-footer{ text-align:center; font-size:12px; color:var(--dim); margin-top:60px; }
+
+@media (max-width:520px){
+  h1{ font-size:24px; }
+  .other-types-grid{ grid-template-columns:1fr; }
+  .compare-grid{ grid-template-columns:1fr; }
+}
