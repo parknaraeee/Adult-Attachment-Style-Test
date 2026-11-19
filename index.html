@@ -13,6 +13,8 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://xn--c79ao69afndh2beykqtq.com/">
 <link rel="canonical" href="https://xn--c79ao69afndh2beykqtq.com/">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHW289SRWM"></script>
+<script src="/assets/analytics.js"></script>
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="성인 애착 유형 검사">
 <meta name="twitter:description" content="나는 관계 안에서 어떤 사람인가">
@@ -743,8 +745,16 @@ let mode = null;
 let questions = [];
 let current = 0;
 let answers = [];
+// ── GA 추적 상태 ──
+const T = (n,p)=>{ if (window.track) window.track(n,p||{}); };
+const TB = (n,p)=>{ if (window.trackBeacon) window.trackBeacon(n,p||{}); };
+let qViewAt = 0, testStartAt = 0, answerChanges = 0, progressSent = {}, nameTyped = false, testFinished = false;
+function activeScreen(){ const s=document.querySelector('.screen.active'); return s?s.id.replace('s-',''):'none'; }
+function answeredCount(){ return answers.filter(a=>a!==null).length; }
+function quizCtx(){ return { mode: mode, q_number: current+1, total_questions: questions.length, answered_count: answeredCount(), progress_pct: questions.length?Math.round(answeredCount()/questions.length*100):0, elapsed_sec: testStartAt?Math.round((Date.now()-testStartAt)/1000):0 }; }
 
 function selectMode(m) {
+  T('mode_select', { mode: m, previous_mode: mode || '(none)', name_entered: document.getElementById('name-input').value.trim() ? 'yes' : 'no' });
   mode = m;
   document.getElementById('card-simple').classList.toggle('selected', m==='simple');
   document.getElementById('card-deep').classList.toggle('selected', m==='deep');
@@ -754,6 +764,8 @@ function selectMode(m) {
 function checkReady() {
   const name = document.getElementById('name-input').value.trim();
   const btn = document.getElementById('btn-start');
+  if (name && !nameTyped) { nameTyped = true; T('name_entered', { mode: mode || '(none)' }); }
+  if (name && mode && !btn.classList.contains('ready')) T('start_ready', { mode: mode });
   if (name && mode) {
     btn.classList.add('ready', 'btn-pill-primary');
   } else {
@@ -769,12 +781,13 @@ function showScreen(id, pushState=true) {
 }
 
 window.addEventListener('popstate', function(e) {
+  T('browser_back', Object.assign(quizCtx(), { from_screen: activeScreen(), to_screen: e.state ? String(e.state.screen).replace('s-','') : 'intro' }));
   if (!e.state) { showScreen('s-intro', false); return; }
   const { screen, q } = e.state;
   if (screen === 's-intro') {
     showScreen('s-intro', false);
   } else if (screen === 's-quiz') {
-    current = q > 0 ? q - 1 : 0;
+    current = q || 0;
     showScreen('s-quiz', false);
     renderQ();
   } else if (screen === 's-result') {
@@ -783,13 +796,15 @@ window.addEventListener('popstate', function(e) {
 });
 
 function startTest() {
-  if (!mode) return;
   const name = document.getElementById('name-input').value.trim();
-  if (!name) return;
+  if (!mode || !name) { T('start_blocked', { reason: !mode && !name ? 'no_mode_no_name' : (!mode ? 'no_mode' : 'no_name'), mode: mode || '(none)' }); return; }
   window._userName = name;
   questions = mode==='simple' ? simpleQs : deepQs;
   answers = new Array(questions.length).fill(null);
   current = 0;
+  testStartAt = Date.now(); answerChanges = 0; progressSent = {}; testFinished = false;
+  T('test_start', { mode: mode, total_questions: questions.length });
+  if (window.resetScrollDepth) window.resetScrollDepth();
   showScreen('s-quiz');
   renderQ();
 }
@@ -813,25 +828,39 @@ function renderQ() {
   const nb = document.getElementById('btn-next');
   nb.disabled = answers[current]===null;
   nb.textContent = current===total-1 ? '결과 보기' : '다음';
+  qViewAt = Date.now();
+  T('question_view', Object.assign(quizCtx(), { q_category: q.cat, is_revisit: answers[current]!==null ? 'yes' : 'no', is_last: current===total-1 ? 'yes' : 'no' }));
 }
 
 function selectAns(v) {
+  const prevAns = answers[current];
+  if (prevAns !== null && prevAns !== v) answerChanges++;
   answers[current] = v;
+  T('question_answer', Object.assign(quizCtx(), { q_category: questions[current].cat, answer: v, previous_answer: prevAns===null ? 0 : prevAns, is_change: prevAns!==null ? 'yes' : 'no', response_ms: Date.now()-qViewAt }));
   document.querySelectorAll('.scale-btn').forEach((b,i)=>b.classList.toggle('sel',i+1===v));
   document.getElementById('btn-next').disabled = false;
 }
 
 function nextQ() {
-  if (answers[current]===null) return;
-  if (current===questions.length-1) { showLoading(); return; }
+  if (answers[current]===null) { T('next_blocked', quizCtx()); return; }
+  T('question_next', Object.assign(quizCtx(), { dwell_ms: Date.now()-qViewAt }));
+  const pctDone = Math.round((current+1)/questions.length*100);
+  [10,25,50,75,90].forEach(m=>{ if (pctDone>=m && !progressSent[m]) { progressSent[m]=1; T('quiz_progress', Object.assign(quizCtx(), { milestone: m })); } });
+  if (current===questions.length-1) {
+    testFinished = true;
+    T('test_submit', Object.assign(quizCtx(), { duration_sec: Math.round((Date.now()-testStartAt)/1000), answer_changes: answerChanges }));
+    showLoading(); return;
+  }
   current++;
   history.pushState({ screen: 's-quiz', q: current }, '', '');
   renderQ();
 }
 
-function prevQ() { if(current>0){ history.back(); } }
+function prevQ() { if(current>0){ T('question_prev', quizCtx()); history.back(); } }
 
 function showLoading() {
+  window._resultSource = 'test';
+  T('loading_view', { mode: mode });
   showScreen('s-loading');
   setTimeout(()=>{ calcResult(); showScreen('s-result'); setTimeout(()=>{animateBars();},150); }, 2000);
 }
@@ -1077,6 +1106,40 @@ function renderResult(primary, pcts, second, secondPct, anxPct, avoPct) {
 
   const detailLink = document.getElementById('r-detail-link');
   if (detailLink) detailLink.href = `/types/${primary}.html`;
+
+  const src = window._resultSource || 'test';
+  const rp = { result_source: src, mode: window._isDeep ? 'deep' : 'simple', primary_type: primary, second_type: second, primary_pct: pcts[primary], gap_pct: gapPct, combo_type: combo.type, anx_pct: anxPct, avo_pct: avoPct, top_category: window._topCategory || '(none)' };
+  window._resultParams = rp;
+  T('result_view', rp);
+  if (src === 'test') T('test_complete', Object.assign({ duration_sec: testStartAt ? Math.round((Date.now()-testStartAt)/1000) : 0, answer_changes: answerChanges }, rp));
+  observeResultSections(rp);
+  window._resultSource = null;
+}
+
+// 결과 화면에서 어디까지 내려 봤는지
+let resultObserver = null;
+function observeResultSections(rp) {
+  if (!('IntersectionObserver' in window)) return;
+  if (resultObserver) resultObserver.disconnect();
+  const seen = {};
+  const targets = [
+    ['score', document.querySelector('#s-result .score-section')],
+    ['axes', document.getElementById('axes-section')],
+    ['description', document.getElementById('r-cards')],
+    ['ad_slot', document.getElementById('ad-slot-result')],
+    ['buttons', document.getElementById('btn-row')],
+    ['detail_links', document.getElementById('r-detail-link')],
+    ['footer', document.querySelector('#s-result .site-footer')]
+  ];
+  resultObserver = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      const name = en.target.getAttribute('data-result-section');
+      if (!en.isIntersecting || seen[name] || en.target.offsetParent === null) return;
+      seen[name] = 1;
+      T('result_section_view', { section_name: name, primary_type: rp.primary_type, result_source: rp.result_source, mode: rp.mode });
+    });
+  }, { threshold: 0.5 });
+  targets.forEach(([name, el]) => { if (el) { el.setAttribute('data-result-section', name); resultObserver.observe(el); } });
 }
 
 // 결과 콘텐츠(r-cards)가 실제로 채워진 뒤에만 광고 요소를 생성해서 넣는다.
@@ -1126,6 +1189,7 @@ function showToast(msg) {
 }
 
 function copyToClipboard(text) {
+  T('share_complete', { method: 'copy_link', primary_type: window._primary });
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => showToast('링크가 복사되었어요 🔗')).catch(() => {
       const el = document.createElement('textarea');
@@ -1148,19 +1212,24 @@ function shareResult() {
   const resultUrl = getResultUrl();
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
+  const rp = window._resultParams || {};
+  T('share_click', { method: (isMobile && navigator.share) ? 'native_share' : 'copy_link', primary_type: primary, result_source: rp.result_source, mode: rp.mode });
   if (isMobile && navigator.share) {
     navigator.share({
       title: `나의 애착 유형은 ${d.name}`,
       text: `[성인 애착 유형 검사]\n나의 유형: ${d.emoji} ${d.name}\n${d.subtitle}\n\n너는 어떤 유형일까? 👇`,
       url: resultUrl
-    });
+    }).then(() => T('share_complete', { method: 'native_share', primary_type: primary }))
+      .catch(err => T('share_cancel', { method: 'native_share', primary_type: primary, reason: (err && err.name) || 'unknown' }));
   } else {
     copyToClipboard(resultUrl);
   }
 }
 
 function resetTest() {
-  mode = null;
+  const rp = window._resultParams || {};
+  T('retry_click', { primary_type: rp.primary_type, result_source: rp.result_source, mode: rp.mode });
+  mode = null; nameTyped = false;
   history.replaceState(null, '', window.location.pathname);
   showScreen('s-intro', false);
   document.getElementById('card-simple').classList.remove('selected');
@@ -1192,6 +1261,8 @@ function loadFromHash() {
     window._secondPct = sorted.filter(([k])=>k!==primary)[0][1];
     window._anxPct = pcts.anxious;
     window._avoPct = pcts.avoidant;
+    window._resultSource = 'shared_link';
+    T('shared_result_landing', { primary_type: primary, mode: modeParam });
     renderResult(primary, pcts, window._second, window._secondPct, window._anxPct, window._avoPct);
     showScreen('s-result', false);
     setTimeout(() => { animateBars(); drawTypeDot('r-dot', primary); }, 300);
@@ -1203,19 +1274,33 @@ window.addEventListener('DOMContentLoaded', () => {
   // 결과 공유 링크로 들어온 경우 팝업 안 띄움
   if(!window.location.hash.startsWith('#result=')) {
     document.getElementById('popup-overlay').classList.remove('hidden');
+    window._popupShownAt = Date.now();
+    T('popup_view');
   } else {
     document.getElementById('popup-overlay').classList.add('hidden');
   }
   loadFromHash();
 });
 
-function closePopup() {
-  document.getElementById('popup-overlay').classList.add('hidden');
+function closePopup(method) {
+  const ov = document.getElementById('popup-overlay');
+  if (!ov.classList.contains('hidden')) T('popup_close', { method: method || 'confirm_button', read_ms: window._popupShownAt ? Date.now()-window._popupShownAt : 0 });
+  ov.classList.add('hidden');
 }
 
 function handlePopupClick(e) {
-  if(!document.getElementById('popup-box').contains(e.target)) closePopup();
+  if(!document.getElementById('popup-box').contains(e.target)) closePopup('overlay');
 }
+
+// 퀴즈 도중 이탈 (탭 닫기·다른 앱 전환·뒤로가기로 사이트 이탈)
+window.addEventListener('pagehide', () => {
+  if (activeScreen() === 'quiz' && !testFinished) TB('quiz_exit', Object.assign(quizCtx(), { dwell_ms: Date.now()-qViewAt }));
+  else if (activeScreen() === 'intro') TB('intro_exit', { mode: mode || '(none)', name_entered: nameTyped ? 'yes' : 'no' });
+});
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && activeScreen() === 'quiz' && !testFinished) TB('quiz_hidden', quizCtx());
+  if (document.visibilityState === 'visible' && activeScreen() === 'quiz' && !testFinished) T('quiz_resumed', quizCtx());
+});
 window.addEventListener('hashchange', () => { loadFromHash(); });
 
 function updateBtnRowDock() {
